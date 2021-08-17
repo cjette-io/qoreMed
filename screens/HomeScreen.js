@@ -253,7 +253,7 @@ const HomeScreen = ({ navigation }) => {
                                                     </View>
                                                 </View>
 
-                                                {appointmentToday.filter(item => item.branch_external_id.includes(ClinicID)).map((item, i) => {
+                                                {/* {appointmentToday.filter(item => item.branch_external_id.includes(ClinicID)).map((item, i) => {
                                                     return (
                                                         <View style={{ backgroundColor: 'rgba(0,143,251,0.2)', borderRadius: 5 }}>
                                                             <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, padding: 5, borderRadius: 5, }}> {item.people_waiting} </Text>
@@ -261,7 +261,7 @@ const HomeScreen = ({ navigation }) => {
                                                         </View>
 
                                                     )
-                                                })}
+                                                })} */}
 
 
                                             </View>
