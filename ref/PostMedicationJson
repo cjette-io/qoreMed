@@ -1,0 +1,9 @@
+"generic_name": "Bioflu", 
+"brand_name": "tea", 
+"dose": "1", 
+"medication_form_id": "128",
+ "quantity": "123",
+  "medication_frequency_id": "258",
+   "duration_from": "2021-09-03", 
+   "duration_to": "2021-09-10", 
+   "note": "asdfsdfa"

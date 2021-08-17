@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "68351130926",
+    "project_id": "qoremed-8758d",
+    "storage_bucket": "qoremed-8758d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68351130926:android:5d099418f7579c4d0a8ebf",
+        "android_client_info": {
+          "package_name": "com.qoremeddoctor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "68351130926-48e59e1tge7lk10nakpuk33p7h4dnuqc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.qoremeddoctor",
+            "certificate_hash": "c6180a75883dbce0d0b8fc2d3e45871c422b71e7"
+          }
+        },
+        {
+          "client_id": "68351130926-7ib44708f0259n9kkomrh7upjiju86uj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZRJPi8DOATPxDpo545L4k75xdVRKM0Us"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "68351130926-7ib44708f0259n9kkomrh7upjiju86uj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,42 @@
+
+https://www.codegrepper.com/code-examples/typescript/javascript+reduce+array+of+objects+group+keys
+
+
+
+https://www.youtube.com/watch?v=HF5qgqQRCWA
+https://stackoverflow.com/questions/59879085/javascript-reduce-array-of-objects-to-a-key-value-pair-map-retaining-duplicate
+var obj1 = {
+  name: "server1",
+  type: "http",
+  port: "8080"
+}
+
+var obj2 = {
+  name: "server2",
+  type: "https",
+  port: "8443"
+}
+
+var obj3 = {
+  name: "server3",
+  type: "http",
+  port: "80"
+}
+
+// Place objects in an array (as interm step)
+var array = [obj1, obj2, obj3];
+
+let output = {};
+array.forEach((item) => {
+  // the item does not exists, we create it.
+  if(!output[item.type]) {
+    output[item.type] = {key: item.type, value: []};
+  }
+  // in either case, we push the current item in the value.
+  // of the current output key.
+  output[item.type].value.push(item);
+});
+
+// we are using Object.values() because we do not want the keys
+// used to generate the output.
+console.log(Object.values(output));

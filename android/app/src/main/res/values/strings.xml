@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">QoreMed Doctor</string>
+  <string name="facebook_app_id">321213213037062</string>
+<string name="fb_login_protocol_scheme">fb321213213037062</string>
+
+
+</resources>
