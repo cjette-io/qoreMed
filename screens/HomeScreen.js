@@ -242,7 +242,10 @@ const HomeScreen = ({ navigation }) => {
                                     <>
                                         <TouchableOpacity
                                         key={i}
-                                            onPress={() => navigation.navigate('AppointmentPerClinic')}
+                                            onPress={() => navigation.navigate('AppointmentPerClinic',{
+                                                clinic_id: ClinicID,
+                                                clinic_name :item.clinic_name
+                                            })}
                                             style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', marginTop: 10, justifyContent: 'center' }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                                 <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
@@ -253,15 +256,15 @@ const HomeScreen = ({ navigation }) => {
                                                     </View>
                                                 </View>
 
-                                                {/* {appointmentToday.filter(item => item.branch_external_id.includes(ClinicID)).map((item, i) => {
+                                                {appointmentToday.filter(item => item.branch_external_id.includes(ClinicID)).map((item, i) => {
                                                     return (
-                                                        <View style={{ backgroundColor: 'rgba(0,143,251,0.2)', borderRadius: 5 }}>
+                                                        <View key={i} style={{ backgroundColor: 'rgba(0,143,251,0.2)', borderRadius: 5 }}>
                                                             <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, padding: 5, borderRadius: 5, }}> {item.people_waiting} </Text>
 
                                                         </View>
 
                                                     )
-                                                })} */}
+                                                })}
 
 
                                             </View>
