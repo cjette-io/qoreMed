@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import {RefreshControl, StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native'
+import { ActivityIndicator, RefreshControl, StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-import { Button, Menu, Divider, Provider } from 'react-native-paper';
+import { Button, Menu, Divider, Provider, Modal, Portal } from 'react-native-paper';
 // Icon Set
 import IconION from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -18,15 +18,24 @@ import URL from '../api'
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
-  }
+}
 
 const AppointmentPerClinic = ({ route, navigation }) => {
     const [refreshing, setRefreshing] = React.useState(false);
+    const [visible, setVisible] = React.useState(false);
+
+    const showModal = () => setVisible(true);
+    const hideModal = () => setVisible(false);
+    const containerStyle = { flex: 1 };
+
+
+    const [loading, setLoading] = React.useState(true);
 
     const onRefresh = React.useCallback(() => {
-      setRefreshing(true);
-      loadAppointmentQueue()
-      wait(2000).then(() => setRefreshing(false));
+        setRefreshing(true);
+        setVisible(true)
+        loadAppointmentQueue()
+        wait(2000).then(() => setRefreshing(false));
     }, []);
     const { clinic_id, clinic_name } = route.params
     const [inOutVisibility, setinOutVisibility] = useState(false)
@@ -38,8 +47,9 @@ const AppointmentPerClinic = ({ route, navigation }) => {
     const [appointmentData, setappointmentData] = useState([])
 
     useEffect(() => {
+        setVisible(true)
         loadAppointmentQueue()
-           }, [])
+    }, [])
 
     async function loadAppointmentQueue() {
         let token;
@@ -79,8 +89,9 @@ const AppointmentPerClinic = ({ route, navigation }) => {
 
 
                 setappointmentData(Appointment)
+                setVisible(false)
 
-                // console.log(JSON.stringify(Appointment))
+                //console.log(JSON.stringify(Appointment))
 
                 // if (json.length > 0) {
                 //     Appointment.push(
@@ -166,10 +177,185 @@ const AppointmentPerClinic = ({ route, navigation }) => {
 
     }
 
+    const confirmQ = (id) => {
+
+        // alert(id)
+        setVisible(true)
+        setClickDots(!clickDots)
+        
+        fetch(URL + 'api/v1/clinics/' + clinic_id + '/confirm-queue', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
+            }, body: JSON.stringify({
+                queue_id: id
+            })
+        })
+            .then((response) => response.json())
+            .then((json) => {
+
+                console.log(JSON.stringify(json))
+                loadAppointmentQueue()
+                setClickDots(!clickDots)
+                if ('message' in json) {
+                    alert(json.message)
+                }
+                //  setinOutVisibility(true)
+
+            })
+    }
+
+
+    const check_in = (id) => {
+
+        // alert(id)
+        setVisible(true)
+        setClickDots(!clickDots)
+
+        fetch(URL + 'api/v1/clinics/' + clinic_id + '/checkin', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
+            }, body: JSON.stringify({
+                queue_id: id
+            })
+        })
+            .then((response) => response.json())
+            .then((json) => {
+
+                console.log(JSON.stringify(json))
+                loadAppointmentQueue()
+                setClickDots(!clickDots)
+                if ('message' in json) {
+                    alert(json.message)
+                }
+                //  setinOutVisibility(true)
+
+            })
+    }
+    const serve = (id) => {
+
+        // alert(id)
+        setVisible(true)
+        setClickDots(!clickDots)
+        fetch(URL + 'api/v1/clinics/' + clinic_id + '/serve-queue', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
+            }, body: JSON.stringify({
+                queue_id: id
+            })
+        })
+            .then((response) => response.json())
+            .then((json) => {
+
+                console.log(JSON.stringify(json))
+                loadAppointmentQueue()
+                setClickDots(!clickDots)
+                if ('message' in json) {
+                    alert(json.message)
+                }
+                //  setinOutVisibility(true)
+
+            })
+    }
+    const FinishQ = (id) => {
+
+        // alert(id)
+        setVisible(true)
+        setClickDots(!clickDots)
+        fetch(URL + 'api/v1/clinics/' + clinic_id + '/finish-queue', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
+            }, body: JSON.stringify({
+                queue_id: id
+            })
+        })
+            .then((response) => response.json())
+            .then((json) => {
+
+                console.log(JSON.stringify(json))
+                loadAppointmentQueue()
+                setClickDots(!clickDots)
+                if ('message' in json) {
+                    alert(json.message)
+                }
+                //  setinOutVisibility(true)
+
+            })
+    }
+    const SkipQ = (id) => {
+
+        // alert(id)
+        setVisible(true)
+        setClickDots(!clickDots)
+        fetch(URL + 'api/v1/clinics/' + clinic_id + '/skip-queue', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
+            }, body: JSON.stringify({
+                queue_id: id
+            })
+        })
+            .then((response) => response.json())
+            .then((json) => {
+
+                console.log(JSON.stringify(json))
+                loadAppointmentQueue()
+               
+                if ('message' in json) {
+                    alert(json.message)
+                }
+                //  setinOutVisibility(true)
+
+            })
+    }
+
+    const CancelQ = (id) => {
+  // alert(id)
+  setVisible(true)
+  setClickDots(!clickDots)
+  fetch(URL + 'api/v1/clinics/' + clinic_id + '/cancel-queue', {
+      method: 'POST',
+      headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token
+      }, body: JSON.stringify({
+          queue_id: id
+      })
+  })
+      .then((response) => response.json())
+      .then((json) => {
+
+          console.log(JSON.stringify(json))
+          loadAppointmentQueue()
+         
+          if ('message' in json) {
+              alert(json.message)
+          }
+          //  setinOutVisibility(true)
+
+      })
+    }
+
+
     const openMenu = (i) => {
 
         setClickDots(i)
-        console.log(i)
+      
+
     };
 
     const closeMenu = () => {
@@ -214,7 +400,8 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                         onRefresh={onRefresh}
                     />
                 }
-                >
+            >
+
 
                 <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end' }}>
                     {inOutVisibility == false ? (
@@ -244,89 +431,89 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                     {appointmentData.map((event, i) => {
                         return (
                             <View key={i + '-' + event.id}>
-                             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10}}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 }}>
                                     <Text style={{ padding: 5, fontWeight: 'bold', fontFamily: 'NunitoSans-Bold', fontSize: 13, color: '#999', }}>{event.time} - {event.is_virtual}</Text>
                                     <Text style={{ backgroundColor: '#e91e63', fontWeight: 'bold', fontFamily: 'NunitoSans-Bold', fontSize: 13, color: 'white', padding: 4, borderRadius: 5 }}>{event.people_waiting} Waiting</Text>
                                 </View>
 
 
-                                {event.queues.map((item,i) => {
-                            return (
-                            <>
-                            <View key={i} style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%',   height: 100, marginVertical:5 }}>
-                        <View style={{marginBottom:5, flexDirection: 'row',justifyContent: 'space-between'}}>
-                            <Text style={{padding:5, fontWeight:'bold',fontSize:14}}>{item.queue_no}.</Text>
-                            <Text style={{padding:5, backgroundColor: item.status == 'pending' ? 'gray' : item.status == 'confirmed' ? '#ffa726'  : item.status == 'arrived' ? '#ff7043' : item.status == 'serving' ? '#29b6f6' : item.status == 'completed' ? 'green' : 'red', borderRadius:5,color:'white'}}>{item.status}</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
-                           
-                           
-                           
-                            <View style={{ flexDirection: 'row', flex: 1, }}>
-
-                                <View style={{ justifyContent: 'center' }}>
-                                    <Image source={Avatar} style={{ width: 40, height: 40 }}></Image>
-                                </View>
-
-                                <TouchableOpacity onPress={() => navigation.navigate('PatientProfile',item.reference_external_id)} style={{ flex: 1 }}>
-                                    <Text style={{ fontWeight: 'bold', fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>{item.name}</Text>
-                                    <Text style={{ fontFamily: 'NunitoSans-Light', fontSize: 12, color: '#999', }}>Reason: {item.transaction_type}</Text>
-                                </TouchableOpacity>
-
-                            </View>
-                            <View>
-
-                            <Menu
-                              visible={clickDots == item.id ? true : false}
-                                onDismiss={closeMenu}
-                                anchor={<TouchableOpacity onPress={() => openMenu(item.id)}><IconMCI name="dots-vertical" size={20}></IconMCI></TouchableOpacity>}>
-
-                                {item.status == 'pending' ? (
-                                    <>
-                                    <Menu.Item onPress={() => { }} title="Confirm" />
-                                    <Menu.Item onPress={() => { }} title="Cancel" />    
-                                    </>
-                                     ) : 
-                                    item.status == 'confirmed' ? (
+                                {event.queues.map((item, i) => {
+                                    return (
                                         <>
-                                        <Menu.Item onPress={() => { }} title="Check In" />
-                                        <Menu.Item onPress={() => { }} title="Cancel" />    
+                                            <View key={i} style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', height: 100, marginVertical: 5 }}>
+                                                <View style={{ marginBottom: 5, flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                    <Text style={{ padding: 5, fontWeight: 'bold', fontSize: 14 }}>{item.queue_no}.</Text>
+                                                    <Text style={{ padding: 5, backgroundColor: item.status == 'pending' ? 'gray' : item.status == 'confirmed' ? '#ffa726' : item.status == 'arrived' ? '#ff7043' : item.status == 'serving' ? '#29b6f6' : item.status == 'completed' ? 'green' : 'red', borderRadius: 5, color: 'white' }}>{item.status}</Text>
+                                                </View>
+                                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
+
+
+
+                                                    <View style={{ flexDirection: 'row', flex: 1, }}>
+
+                                                        <View style={{ justifyContent: 'center' }}>
+                                                            <Image source={Avatar} style={{ width: 40, height: 40 }}></Image>
+                                                        </View>
+
+                                                        <TouchableOpacity onPress={() => navigation.navigate('PatientProfile', item.reference_external_id)} style={{ flex: 1 }}>
+                                                            <Text style={{ fontWeight: 'bold', fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>{item.name}</Text>
+                                                            <Text style={{ fontFamily: 'NunitoSans-Light', fontSize: 12, color: '#999', }}>Reason: {item.transaction_type}</Text>
+                                                        </TouchableOpacity>
+
+                                                    </View>
+                                                    <View>
+
+                                                        <Menu
+                                                            visible={clickDots == item.id ? true : false}
+                                                            onDismiss={closeMenu}
+                                                            anchor={<TouchableOpacity onPress={() => openMenu(item.id)}><IconMCI name="dots-vertical" size={20}></IconMCI></TouchableOpacity>}>
+
+                                                            {item.status == 'pending' ? (
+                                                                <>
+                                                                    <Menu.Item onPress={() =>confirmQ(item.id)} title="Confirm" />
+                                                                    <Menu.Item onPress={() => CancelQ(item.id)} title="Cancel" />
+                                                                </>
+                                                            ) :
+                                                                item.status == 'confirmed' ? (
+                                                                    <>
+                                                                        <Menu.Item onPress={() => check_in(item.reference)} title="Check In" />
+                                                                        <Menu.Item onPress={() => CancelQ(item.id)} title="Cancel" />
+                                                                    </>
+                                                                )
+
+                                                                    :
+                                                                    item.status == 'arrived' ? (
+                                                                        <>
+                                                                            <Menu.Item onPress={() => serve(item.id)} title="Serve" />
+                                                                            <Menu.Item onPress={() => CancelQ(item.id)} title="Cancel" />
+                                                                        </>
+                                                                    )
+                                                                        :
+
+                                                                        item.status == 'serving' ? (
+                                                                            <>
+                                                                                <Menu.Item onPress={() => FinishQ(item.id)} title="Finish" />
+                                                                                <Menu.Item onPress={() => SkipQ(item.id)} title="Skip" />
+                                                                                <Menu.Item onPress={() => CancelQ(item.id)} title="Cancel" />
+                                                                            </>
+                                                                        )
+                                                                            :
+                                                                            (null)
+                                                            }
+
+
+
+                                                        </Menu>
+
+                                                    </View>
+                                                </View>
+
+                                            </View>
+
                                         </>
+
                                     )
-
-                                    :
-                                    item.status == 'arrived' ? (
-                                        <>
-                                        <Menu.Item onPress={() => { }} title="Serve" />
-                                        <Menu.Item onPress={() => { }} title="Cancel" />    
-                                        </>
-                                    )
-                                    :
-
-                                    item.status == 'serving' ? (
-                                        <>
-                                        <Menu.Item onPress={() => { }} title="Finish" />
-                                        <Menu.Item onPress={() => { }} title="Skip" />
-                                        <Menu.Item onPress={() => { }} title="Cancel" />    
-                                        </>
-                                    )
-                                    :
-                                    (null)
-                                }
-
-                                
-
-                            </Menu>
-                               
-                            </View>
-                        </View>
-                        
-                    </View>
-                  
-                            </>
-                    
-                            )
-                        })}
+                                })}
 
 
                             </View>
@@ -341,6 +528,15 @@ const AppointmentPerClinic = ({ route, navigation }) => {
 
 
             </ScrollView>
+
+
+            <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={{ height: 80, width: 50, borderRadius: 5}} style={{ justifyContent: 'center', alignItems: 'center', }}>
+                <View style={{ backgroundColor: 'white', }}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+            </Modal>
+
+
         </Provider>
     )
 }
