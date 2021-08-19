@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native'
+import {RefreshControl, StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -19,7 +19,22 @@ import LogoQoreMed from '../assets/logo/QoreMed_Logo-Landscape-Full-Color-Text.p
 // Url Based
 import URL from '../api'
 
+
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+  
+
 const HomeScreen = ({ navigation }) => {
+
+
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      loadClinicSchedule()
+      wait(2000).then(() => setRefreshing(false));
+    }, []);
 
     const [userFName, setuserFName] = useState('');
     const [userPhoto, setUserPhoto] = useState('')
@@ -94,92 +109,103 @@ const HomeScreen = ({ navigation }) => {
         }, 500);
     }, [])
 
-    useEffect(async () => {
-        let token;
-        token = await AsyncStorage.getItem('userToken');
+    useEffect(() => {
+        loadClinicSchedule()
 
-        fetch(URL + 'api/v1/clinics', {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + token
-            }
-        })
-            .then((response) => response.json())
-            .then((json) => {
+    }, [])
 
-                let MappedClinicData = []
-                let response = json.data;
-                let promises = [];
-                let Appointment = [];
-                if (response.length > 0) {
+  async function loadClinicSchedule () {
+    let token;
+    token = await AsyncStorage.getItem('userToken');
+
+    fetch(URL + 'api/v1/clinics', {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token
+        }
+    })
+        .then((response) => response.json())
+        .then((json) => {
+
+            let MappedClinicData = []
+            let response = json.data;
+            let promises = [];
+            let Appointment = [];
+            if (response.length > 0) {
 
 
-                    //Mapping muna :)
-                    response.map((item, i) => {
+                //Mapping muna :)
+                response.map((item, i) => {
 
-                        //Fetch kada sched_today
-                        let individual_clinicID = item.id
-                        promises.push(
-                            fetch(URL + 'api/v1/clinics/' + individual_clinicID + '/appointments/today', {
-                                method: 'GET',
-                                headers: {
-                                    Accept: 'application/json',
-                                    'Content-Type': 'application/json',
-                                    Authorization: 'Bearer ' + token
-                                }
-                            })
-                                .then((response) => response.json())
-                                .then((json) => {
+                    //Fetch kada sched_today
+                    let individual_clinicID = item.id
+                    promises.push(
+                        fetch(URL + 'api/v1/clinics/' + individual_clinicID + '/appointments/today', {
+                            method: 'GET',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                Authorization: 'Bearer ' + token
+                            }
+                        })
+                            .then((response) => response.json())
+                            .then((json) => {
 
-                                    if (json.length > 0) {
-                                        Appointment.push(
-                                            {
-                                            branch_external_id : json[0].branch_external_id,
-                                            people_waiting : json[0].people_waiting,
-                                            }
-                                        )
+                                if (json.length > 0) {
+
+                                    const people_waiting = json
+                                    var total = 0;
+
+                                    for (var i = 0; i < people_waiting.length; i++) {
+                                        total = total + people_waiting[i].people_waiting;
                                     }
+                                    Appointment.push(
+                                        {
+                                            branch_external_id: json[0].branch_external_id,
+                                            people_waiting: total,
+                                        }
+                                    )
+                                }
 
-                                })
+                            })
 
-                        )
+                    )
 
-                        //Pushing na didi 
-                        MappedClinicData.push({
-                            clinic_id: item.id,
-                            clinic_name: item.name,
-                            clinic_address: item.address.full_address,
-                        });
-
-
-                    })
+                    //Pushing na didi 
+                    MappedClinicData.push({
+                        clinic_id: item.id,
+                        clinic_name: item.name,
+                        clinic_address: item.address.full_address,
+                    });
 
 
-
-                }
-
-
-                Promise.all(promises).then(() => {
-                
-                     console.log(JSON.stringify(Appointment))
-
-                    setClinicList(MappedClinicData)
-                    setappointmentToday(Appointment)
+                })
 
 
 
-                });
+            }
 
-            })
-            .catch((error) => {
 
-                console.log(error);
+            Promise.all(promises).then(() => {
+
+                console.log(JSON.stringify(Appointment))
+
+                setClinicList(MappedClinicData)
+                setappointmentToday(Appointment)
+
+
 
             });
 
-    }, [])
+        })
+        .catch((error) => {
+
+            console.log(error);
+
+        });
+  }
 
 
     const display = () => {
@@ -213,6 +239,12 @@ const HomeScreen = ({ navigation }) => {
             </SafeAreaView>
             <View style={styles.container}>
                 <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
                     vertical
                     showsVerticalScrollIndicator={false}
                     style={{ flex: 1, }}
@@ -241,10 +273,10 @@ const HomeScreen = ({ navigation }) => {
                                 return (
                                     <>
                                         <TouchableOpacity
-                                        key={i}
-                                            onPress={() => navigation.navigate('AppointmentPerClinic',{
+                                            key={i}
+                                            onPress={() => navigation.navigate('AppointmentPerClinic', {
                                                 clinic_id: ClinicID,
-                                                clinic_name :item.clinic_name
+                                                clinic_name: item.clinic_name
                                             })}
                                             style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', marginTop: 10, justifyContent: 'center' }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

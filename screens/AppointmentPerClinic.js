@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native'
+import {RefreshControl, StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -11,33 +11,37 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-//Dummy Database
-
-import { AppointmentPerClinicDB } from '../dummyData/db'
-
 // dummy picture
 import Avatar from '../assets/images/icon_man.png'
-
 // Url Based
 import URL from '../api'
 
-const AppointmentPerClinic = ({ navigation, route }) => {
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
 
-    const {clinic_id, clinic_name} = route.params
+const AppointmentPerClinic = ({ route, navigation }) => {
+    const [refreshing, setRefreshing] = React.useState(false);
 
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      loadAppointmentQueue()
+      wait(2000).then(() => setRefreshing(false));
+    }, []);
+    const { clinic_id, clinic_name } = route.params
     const [inOutVisibility, setinOutVisibility] = useState(false)
-    const [clickDots, setClickDots] = React.useState(null)
-    const [visible, setVisible] = React.useState(false);
-    const [apcDB, setapcDB] = useState([])
 
-    const [queues ,setqueues] = useState([])
-    const [startTime, setStartTime] = useState('')
-    const [endTime, setEndTime] = useState('')
-    const [people_waiting, setpeople_waiting] = useState('')
+    const [clickDots, setClickDots] = React.useState(null)
+
 
     const [token, setToken] = useState('')
-    // //ini firstLoad
-    useEffect( async() => {
+    const [appointmentData, setappointmentData] = useState([])
+
+    useEffect(() => {
+        loadAppointmentQueue()
+           }, [])
+
+    async function loadAppointmentQueue() {
         let token;
         token = await AsyncStorage.getItem('userToken');
         setToken(token)
@@ -52,11 +56,31 @@ const AppointmentPerClinic = ({ navigation, route }) => {
             .then((response) => response.json())
             .then((json) => {
 
-               // console.log(JSON.stringify(json[0].queues))
-                setqueues(json[0].queues)
-                setStartTime(json[0].formatted_start_time)
-                setEndTime(json[0].formatted_end_time)
-                setpeople_waiting(json[0].people_waiting)
+                // console.log(JSON.stringify(json[0].queues))
+                // setqueues(json[0].queues)
+                // setStartTime(json[0].formatted_start_time)
+                // setEndTime(json[0].formatted_end_time)
+                // setpeople_waiting(json[0].people_waiting)
+
+
+                let Appointment = []
+                json.map((item, i) => {
+                    Appointment.push(
+                        {
+                            id: item.id,
+                            people_waiting: item.people_waiting,
+                            time: item.formatted_start_time + ' - ' + item.formatted_end_time,
+                            is_virtual: item.is_virtual == false ? '(On-Site Consultation)' : '(Virtual Consultation)',
+                            queues: item.queues
+                        }
+                    )
+                })
+
+
+
+                setappointmentData(Appointment)
+
+                // console.log(JSON.stringify(Appointment))
 
                 // if (json.length > 0) {
                 //     Appointment.push(
@@ -68,13 +92,14 @@ const AppointmentPerClinic = ({ navigation, route }) => {
                 // }
 
             })
-    }, [])
+    }
+
 
 
 
     const btnIn = () => {
 
-        
+
         fetch(URL + 'api/v1/clinics/' + clinic_id + '/start-serving', {
             method: 'POST',
             headers: {
@@ -89,14 +114,14 @@ const AppointmentPerClinic = ({ navigation, route }) => {
                 console.log(JSON.stringify(json))
                 if ('message' in json) {
                     alert(json.message)
-                   }
+                }
                 setinOutVisibility(true)
 
             })
 
     }
     const btnOut = () => {
-        
+
         fetch(URL + 'api/v1/clinics/' + clinic_id + '/end-serving', {
             method: 'POST',
             headers: {
@@ -110,8 +135,8 @@ const AppointmentPerClinic = ({ navigation, route }) => {
 
                 console.log(JSON.stringify(json))
                 if ('message' in json) {
-                   alert(json.message)
-                  }
+                    alert(json.message)
+                }
                 setinOutVisibility(false)
 
             })
@@ -134,8 +159,8 @@ const AppointmentPerClinic = ({ navigation, route }) => {
                 console.log(JSON.stringify(json))
                 if ('message' in json) {
                     alert(json.message)
-                   }
-               
+                }
+
 
             })
 
@@ -148,15 +173,13 @@ const AppointmentPerClinic = ({ navigation, route }) => {
     };
 
     const closeMenu = () => {
-       
+
         setClickDots(!clickDots)
     };
 
 
-
     return (
-      <>
-        
+        <Provider>
             <SafeAreaView
                 style={{ padding: 10, backgroundColor: 'white' }}
             >
@@ -179,51 +202,61 @@ const AppointmentPerClinic = ({ navigation, route }) => {
 
                 </View>
             </SafeAreaView>
-            <ScrollView
-            contentContainerStyle={{paddingBottom:100}}
-            vertical
-            showsVerticalScrollIndicator={false}
-             style={styles.container}>
 
-                <View style={{ alignItems: 'center',flexDirection:'row', justifyContent: 'flex-end' }}>
+            <ScrollView
+                contentContainerStyle={{ paddingBottom: 100 }}
+                vertical
+                showsVerticalScrollIndicator={false}
+                style={styles.container}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+                >
+
+                <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end' }}>
                     {inOutVisibility == false ? (
                         <>
-                       
-                        <TouchableOpacity onPress={() => btnIn()} style={{ padding: 10, alignItems: 'center' }}>
-                            <Octicons color='#008FFB' name="sign-in" size={30}></Octicons>
-                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>Doctor Is in</Text>
-                        </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => btnIn()} style={{ padding: 10, alignItems: 'center' }}>
+                                <Octicons color='#008FFB' name="sign-in" size={30}></Octicons>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>Doctor Is in</Text>
+                            </TouchableOpacity>
                         </>
                     ) : (
                         <>
-                        <TouchableOpacity onPress={() => btnNextQue()} style={{ padding: 10, alignItems: 'center' }}>
-                            <AntDesign color='black' name="user" size={30}></AntDesign>
-                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>Next Queue</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => btnOut()} style={{ padding: 10, alignItems: 'center' }}>
-                            <Octicons color='#008FFB' name="sign-in" size={30}></Octicons>
-                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>Doctor Is Out</Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity onPress={() => btnNextQue()} style={{ padding: 10, alignItems: 'center' }}>
+                                <AntDesign color='black' name="user" size={30}></AntDesign>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>Next Queue</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => btnOut()} style={{ padding: 10, alignItems: 'center' }}>
+                                <Octicons color='#008FFB' name="sign-in" size={30}></Octicons>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>Doctor Is Out</Text>
+                            </TouchableOpacity>
                         </>
                     )}
 
                 </View>
 
-                {/* mapping kang time muna */}
-
                 <View>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                        <Text style={{ padding: 5, fontWeight: 'bold', fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#999', }}>{startTime} - {endTime}</Text>
-                        <Text style={{ backgroundColor:'#e91e63' , fontWeight: 'bold', fontFamily: 'NunitoSans-Bold', fontSize: 16, color: 'white',padding:4, borderRadius:5 }}>{people_waiting} Waiting</Text>
-                    </View>
+                    {appointmentData.map((event, i) => {
+                        return (
+                            <View key={i + '-' + event.id}>
+                             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10}}>
+                                    <Text style={{ padding: 5, fontWeight: 'bold', fontFamily: 'NunitoSans-Bold', fontSize: 13, color: '#999', }}>{event.time} - {event.is_virtual}</Text>
+                                    <Text style={{ backgroundColor: '#e91e63', fontWeight: 'bold', fontFamily: 'NunitoSans-Bold', fontSize: 13, color: 'white', padding: 4, borderRadius: 5 }}>{event.people_waiting} Waiting</Text>
+                                </View>
 
-                        {queues.map((item,i) => {
+
+                                {event.queues.map((item,i) => {
                             return (
                             <>
-                            <View style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%',   height: 100, marginVertical:5 }}>
+                            <View key={i} style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%',   height: 100, marginVertical:5 }}>
                         <View style={{marginBottom:5, flexDirection: 'row',justifyContent: 'space-between'}}>
                             <Text style={{padding:5, fontWeight:'bold',fontSize:14}}>{item.queue_no}.</Text>
-                            <Text style={{padding:5, backgroundColor: item.status == 'pending' ? 'gray' : item.status == 'confirmed' ? '#ffa726'  : item.status == 'arrived' ? 'orange' : item.status == 'serving' ? '#29b6f6' : item.status == 'completed' ? 'green' : 'red', borderRadius:5,color:'white'}}>{item.status}</Text>
+                            <Text style={{padding:5, backgroundColor: item.status == 'pending' ? 'gray' : item.status == 'confirmed' ? '#ffa726'  : item.status == 'arrived' ? '#ff7043' : item.status == 'serving' ? '#29b6f6' : item.status == 'completed' ? 'green' : 'red', borderRadius:5,color:'white'}}>{item.status}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
                            
@@ -244,11 +277,44 @@ const AppointmentPerClinic = ({ navigation, route }) => {
                             <View>
 
                             <Menu
-                              visible={clickDots == 1 ? true : false}
+                              visible={clickDots == item.id ? true : false}
                                 onDismiss={closeMenu}
-                                anchor={<TouchableOpacity onPress={() => openMenu(1)}><IconMCI name="dots-vertical" size={20}></IconMCI></TouchableOpacity>}>
-                                <Menu.Item onPress={() => { }} title="Confirm" />
-                                <Menu.Item onPress={() => { }} title="Cancel" />
+                                anchor={<TouchableOpacity onPress={() => openMenu(item.id)}><IconMCI name="dots-vertical" size={20}></IconMCI></TouchableOpacity>}>
+
+                                {item.status == 'pending' ? (
+                                    <>
+                                    <Menu.Item onPress={() => { }} title="Confirm" />
+                                    <Menu.Item onPress={() => { }} title="Cancel" />    
+                                    </>
+                                     ) : 
+                                    item.status == 'confirmed' ? (
+                                        <>
+                                        <Menu.Item onPress={() => { }} title="Check In" />
+                                        <Menu.Item onPress={() => { }} title="Cancel" />    
+                                        </>
+                                    )
+
+                                    :
+                                    item.status == 'arrived' ? (
+                                        <>
+                                        <Menu.Item onPress={() => { }} title="Serve" />
+                                        <Menu.Item onPress={() => { }} title="Cancel" />    
+                                        </>
+                                    )
+                                    :
+
+                                    item.status == 'serving' ? (
+                                        <>
+                                        <Menu.Item onPress={() => { }} title="Finish" />
+                                        <Menu.Item onPress={() => { }} title="Skip" />
+                                        <Menu.Item onPress={() => { }} title="Cancel" />    
+                                        </>
+                                    )
+                                    :
+                                    (null)
+                                }
+
+                                
 
                             </Menu>
                                
@@ -262,13 +328,10 @@ const AppointmentPerClinic = ({ navigation, route }) => {
                             )
                         })}
 
-                   
 
-
-
-
-
-
+                            </View>
+                        )
+                    })}
 
                 </View>
 
@@ -277,11 +340,8 @@ const AppointmentPerClinic = ({ navigation, route }) => {
 
 
 
-
-
             </ScrollView>
-   
-      </>
+        </Provider>
     )
 }
 
@@ -294,5 +354,3 @@ const styles = StyleSheet.create({
 
     }
 })
-
-
