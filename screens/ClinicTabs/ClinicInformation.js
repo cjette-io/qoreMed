@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { StyleSheet, Text, View,TouchableOpacity,ScrollView, TextInput,Dimensions } from 'react-native'
+import { StyleSheet, Text, View,TouchableOpacity,ScrollView, TextInput,Dimensions,Image } from 'react-native'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -106,7 +106,15 @@ const ClinicInformation = ({id}) => {
          
                })
             })
-                .then((response) => response.json())
+                .then((response) => {
+                    if(response.status == 200) {
+                       // navigation.goBack()
+                        alert ('Clinic Information successfully updated')
+                        
+                    }else{
+                        alert('Something went wrong.')
+                    }
+                })
                 .then((json) => {
                   
                     console.log(json)

@@ -27,8 +27,15 @@ const ClinicAddNew = ({navigation}) => {
     
     const [token , setToken] = useState('')
 
+    
+    const [isSaving, setisSaving] = useState(false)
 
-    useEffect(async () =>{
+    const [errName, seterrName] = useState('')
+    const [errFee, seterrFee] = useState('')
+
+
+
+    useEffect(async() =>{
         let token;
         token = await AsyncStorage.getItem('userToken');
         setToken(token)
@@ -36,6 +43,10 @@ const ClinicAddNew = ({navigation}) => {
     },[])
 
     const AddClinic = () => {
+        setisSaving(true)
+        seterrName(null)
+        seterrFee(null)
+
         fetch(URL + 'api/v1/clinics', {
             method: 'POST',
             headers: {
@@ -59,6 +70,20 @@ const ClinicAddNew = ({navigation}) => {
             .then((json) => {
               
                 console.log(json)
+
+                if (json.message === "The given data was invalid.") {
+                    if ('name' in json.errors) {
+                        seterrName(json.errors.name[0])
+                    }
+                    if ('fee' in json.errors) {
+                        seterrFee(json.errors.fee[0])
+                    }
+                    setisSaving(false)
+                }else{
+                    alert('Clinic Successfully Added')
+                    navigation.goBack()
+                }
+               
                
 
 
@@ -92,7 +117,9 @@ const ClinicAddNew = ({navigation}) => {
                     </View>
 
                     <View>
-
+                    <TouchableOpacity onPress={() => isSaving == true ? null : AddClinic()}>
+                        <Text style={{ color: isSaving == true ? 'rgba(33,150,243, 0.3)' : '#008FFB' }}>{isSaving == true ? 'Saving...' : 'DONE'}</Text>
+                    </TouchableOpacity>
                     </View>
 
 
@@ -110,14 +137,19 @@ const ClinicAddNew = ({navigation}) => {
 
             <View style={{flex:1 ,marginVertical:10}}>
                      <View>
+                     <Text style={{fontSize:16, fontWeight:'bold'}}>Clinic Name*</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Clinic's name*" value={name} onChangeText={(text) => setName(text)} ></TextInput>
+                        {!errName ? null : <Text style={{ fontSize: 10, color: 'red' }}>{errName}</Text>}
+
                     </View>
 
                     <View style={{marginVertical:10}}>
+                    <Text style={{fontSize:16, fontWeight:'bold'}}>Description</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Description" value={description} onChangeText={(text) => setDescription(text)} ></TextInput>
                     </View>
 
                     <View  style={{marginTop:10}}>
+                    <Text style={{fontSize:16, fontWeight:'bold'}}>Address</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Address Line 1" value={address_1} onChangeText={(text) => setaddress_1(text)} ></TextInput>
                     </View>
 
@@ -138,21 +170,29 @@ const ClinicAddNew = ({navigation}) => {
                     </View>
 
                     <View style={{marginVertical:10}}>
-                        <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Consultation Fee" value={fee} onChangeText={(text) => setFee(text)} ></TextInput>
+                    <Text style={{fontSize:16, fontWeight:'bold'}}>Consultation Fee*</Text>
+                        <TextInput
+                         style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} 
+                         placeholder="Consultation Fee"
+                         keyboardType="numeric"
+                          value={fee} onChangeText={(text) => setFee(text)}/>
+                    
+                        {!errFee ? null : <Text style={{ fontSize: 10, color: 'red' }}>{errFee}</Text>}
+
                     </View>
 
                   
 
             </View>
             
-          <View style={{alignItems: 'center'}}>
+          {/* <View style={{alignItems: 'center'}}>
               <TouchableOpacity
                onPress={() => AddClinic()}
                style={{borderRadius:10, backgroundColor:'gray', padding:10, width:'80%', justifyContent: 'center', alignItems: 'center'}}>
                   <Text style={{fontSize:16, fontWeight:'700',color:'white'}}>Save</Text>
                
               </TouchableOpacity>
-          </View>
+          </View> */}
           
           
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ActivityIndicator, Image } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Auth, MainContentScreen,BottomTab } from './navigation'
+import { Auth, MainContentScreen, BottomTab } from './navigation'
 import { AuthContext } from './context';
 import Loader from './assets/images/preloader.gif'
 
@@ -30,6 +30,14 @@ const App = () => {
         };
 
 
+      case 'LOGOUT':
+        return {
+          ...prevState,
+          userToken: null,
+          isLoading: false,
+        };
+
+
     }
   };
 
@@ -49,24 +57,36 @@ const App = () => {
       } catch (e) {
         console.log(e);
       }
-       console.log('DATA: ', data);
-       console.log('LoginType: ', socialType);
+      console.log('DATA: ', data);
+      console.log('LoginType: ', socialType);
       dispatch({ type: 'LOGIN', token: userToken });
     },
 
-    signInManualAuth : async (DoctorManualData) => {
+    signInManualAuth: async (DoctorManualData) => {
       const userToken = String(DoctorManualData[0].token);
       const loginType = DoctorManualData[0].loginType;
-     
+
       try {
         await AsyncStorage.setItem('userToken', userToken);
         await AsyncStorage.setItem('LoginType', loginType);
-      
+
       } catch (e) {
         console.log(e);
       }
       console.log(userToken)
       dispatch({ type: 'LOGIN', token: userToken });
+
+    },
+
+    LogoutMe: async () => {
+      try {
+        await AsyncStorage.clear();
+
+      } catch (e) {
+        console.log(e);
+      }
+      dispatch({ type: 'LOGOUT' });
+
 
     }
 
@@ -100,27 +120,27 @@ const App = () => {
   if (loginState.isLoading) {
     return (
       <View
-      style={{
+        style={{
           ...StyleSheet.absoluteFill,
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: "white"
-      }}
-  >
-      <Image source={Loader}
+        }}
+      >
+        <Image source={Loader}
           style={{
-              width: 300,
-              height: 300
+            width: 300,
+            height: 300
           }}
-      ></Image>
-  </View>
+        ></Image>
+      </View>
     );
   }
 
   return (
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
-        {loginState.userToken == null ?  Auth() : BottomTab()}
+        {loginState.userToken == null ? Auth() : BottomTab()}
       </NavigationContainer>
     </AuthContext.Provider>
   )

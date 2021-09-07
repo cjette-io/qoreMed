@@ -35,9 +35,11 @@ const AppointmentPerClinic = ({ route, navigation }) => {
         setRefreshing(true);
         setVisible(true)
         loadAppointmentQueue()
+        loadClinicDetails()
         wait(2000).then(() => setRefreshing(false));
     }, []);
     const { clinic_id, clinic_name } = route.params
+
     const [inOutVisibility, setinOutVisibility] = useState(false)
 
     const [clickDots, setClickDots] = React.useState(null)
@@ -45,10 +47,12 @@ const AppointmentPerClinic = ({ route, navigation }) => {
 
     const [token, setToken] = useState('')
     const [appointmentData, setappointmentData] = useState([])
+    const [isServingStarted, setServingStarted] = useState(0)
 
     useEffect(() => {
         setVisible(true)
         loadAppointmentQueue()
+        loadClinicDetails()
     }, [])
 
     async function loadAppointmentQueue() {
@@ -66,7 +70,7 @@ const AppointmentPerClinic = ({ route, navigation }) => {
             .then((response) => response.json())
             .then((json) => {
 
-                // console.log(JSON.stringify(json[0].queues))
+                console.log(JSON.stringify(json))
                 // setqueues(json[0].queues)
                 // setStartTime(json[0].formatted_start_time)
                 // setEndTime(json[0].formatted_end_time)
@@ -81,7 +85,8 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                             people_waiting: item.people_waiting,
                             time: item.formatted_start_time + ' - ' + item.formatted_end_time,
                             is_virtual: item.is_virtual == false ? '(On-Site Consultation)' : '(Virtual Consultation)',
-                            queues: item.queues
+                            queues: item.queues,
+
                         }
                     )
                 })
@@ -103,6 +108,37 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                 // }
 
             })
+    }
+
+    async function loadClinicDetails() {
+        let token;
+        token = await AsyncStorage.getItem('userToken');
+        fetch(URL + 'api/v1/clinics/' + clinic_id, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
+            }
+        })
+            .then((response) => response.json())
+            .then((json) => {
+
+                console.log('Clinic Details : ' + JSON.stringify(json.serving_started));
+                //setServingStarted(json.serving_started)
+
+                if (json.serving_started == 0) {
+                    setinOutVisibility(false)
+                } else {
+                    setinOutVisibility(true)
+                }
+
+            })
+            .catch((error) => {
+
+                console.log(error);
+
+            });
     }
 
 
@@ -127,6 +163,7 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                     alert(json.message)
                 }
                 setinOutVisibility(true)
+                loadClinicDetails()
 
             })
 
@@ -149,6 +186,7 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                     alert(json.message)
                 }
                 setinOutVisibility(false)
+                loadClinicDetails()
 
             })
 
@@ -182,7 +220,7 @@ const AppointmentPerClinic = ({ route, navigation }) => {
         // alert(id)
         setVisible(true)
         setClickDots(!clickDots)
-        
+
         fetch(URL + 'api/v1/clinics/' + clinic_id + '/confirm-queue', {
             method: 'POST',
             headers: {
@@ -313,7 +351,7 @@ const AppointmentPerClinic = ({ route, navigation }) => {
 
                 console.log(JSON.stringify(json))
                 loadAppointmentQueue()
-               
+
                 if ('message' in json) {
                     alert(json.message)
                 }
@@ -323,38 +361,66 @@ const AppointmentPerClinic = ({ route, navigation }) => {
     }
 
     const CancelQ = (id) => {
-  // alert(id)
-  setVisible(true)
-  setClickDots(!clickDots)
-  fetch(URL + 'api/v1/clinics/' + clinic_id + '/cancel-queue', {
-      method: 'POST',
-      headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token
-      }, body: JSON.stringify({
-          queue_id: id
-      })
-  })
-      .then((response) => response.json())
-      .then((json) => {
+        // alert(id)
+        setVisible(true)
+        setClickDots(!clickDots)
+        fetch(URL + 'api/v1/clinics/' + clinic_id + '/cancel-queue', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
+            }, body: JSON.stringify({
+                queue_id: id
+            })
+        })
+            .then((response) => response.json())
+            .then((json) => {
 
-          console.log(JSON.stringify(json))
-          loadAppointmentQueue()
-         
-          if ('message' in json) {
-              alert(json.message)
-          }
-          //  setinOutVisibility(true)
+                console.log(JSON.stringify(json))
+                loadAppointmentQueue()
 
-      })
+                if ('message' in json) {
+                    alert(json.message)
+                }
+                //  setinOutVisibility(true)
+
+            })
+    }
+
+    const create_patient_record = (id) => {
+        setVisible(true)
+        setClickDots(!clickDots)
+
+        fetch(URL + 'api/v1/clinics/' + clinic_id + '/create-patient', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
+            }, body: JSON.stringify({
+                queue_id: id
+            })
+        })
+            .then((response) => response.json())
+            .then((json) => {
+
+                console.log(JSON.stringify(json))
+                loadAppointmentQueue()
+
+                if ('message' in json) {
+                    alert(json.message)
+                }
+                //  setinOutVisibility(true)
+
+            })
     }
 
 
     const openMenu = (i) => {
 
         setClickDots(i)
-      
+
 
     };
 
@@ -372,6 +438,7 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <TouchableOpacity onPress={() => navigation.goBack()}>
+     
                             <IconION name="arrow-back" size={20} color='black' />
                         </TouchableOpacity>
 
@@ -443,7 +510,7 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                                             <View key={i} style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', height: 100, marginVertical: 5 }}>
                                                 <View style={{ marginBottom: 5, flexDirection: 'row', justifyContent: 'space-between' }}>
                                                     <Text style={{ padding: 5, fontWeight: 'bold', fontSize: 14 }}>{item.queue_no}.</Text>
-                                                    <Text style={{ padding: 5, backgroundColor: item.status == 'pending' ? 'gray' : item.status == 'confirmed' ? '#ffa726' : item.status == 'arrived' ? '#ff7043' : item.status == 'serving' ? '#29b6f6' : item.status == 'completed' ? 'green' : 'red', borderRadius: 5, color: 'white' }}>{item.status}</Text>
+                                                    <Text style={{ padding: 5, backgroundColor: item.status == 'pending' ? 'gray' : item.status == 'confirmed' ? '#ffa726' : item.status == 'arrived' ? '#ff7043' : item.status == 'serving' ? '#29b6f6' : item.status == 'completed' ? 'green' : item.status == 'skipped' ? 'gray' : 'red', borderRadius: 5, color: 'white' }}>{item.status}</Text>
                                                 </View>
                                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
 
@@ -456,7 +523,10 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                                                         </View>
 
                                                         <TouchableOpacity onPress={() => navigation.navigate('PatientProfile', item.reference_external_id)} style={{ flex: 1 }}>
-                                                            <Text style={{ fontWeight: 'bold', fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>{item.name}</Text>
+                                                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                                                                <Text style={{ fontWeight: 'bold', fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>{item.name}</Text>
+                                                                <Text style={{ color: 'red', fontSize: 12, left: 5 }}>{item.reference_external_id == null ? 'New' : ''}</Text>
+                                                            </View>
                                                             <Text style={{ fontFamily: 'NunitoSans-Light', fontSize: 12, color: '#999', }}>Reason: {item.transaction_type}</Text>
                                                         </TouchableOpacity>
 
@@ -470,12 +540,18 @@ const AppointmentPerClinic = ({ route, navigation }) => {
 
                                                             {item.status == 'pending' ? (
                                                                 <>
-                                                                    <Menu.Item onPress={() =>confirmQ(item.id)} title="Confirm" />
+                                                                    {item.reference_external_id == null ? (
+                                                                        <Menu.Item onPress={() => create_patient_record(item.id)} title="Create Patient Record" />
+                                                                    ) : (null)}
+                                                                    <Menu.Item onPress={() => confirmQ(item.id)} title="Confirm" />
                                                                     <Menu.Item onPress={() => CancelQ(item.id)} title="Cancel" />
                                                                 </>
                                                             ) :
                                                                 item.status == 'confirmed' ? (
                                                                     <>
+                                                                        {item.reference_external_id == null ? (
+                                                                            <Menu.Item onPress={() => create_patient_record(item.id)} title="Create Patient Record" />
+                                                                        ) : (null)}
                                                                         <Menu.Item onPress={() => check_in(item.reference)} title="Check In" />
                                                                         <Menu.Item onPress={() => CancelQ(item.id)} title="Cancel" />
                                                                     </>
@@ -484,6 +560,9 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                                                                     :
                                                                     item.status == 'arrived' ? (
                                                                         <>
+                                                                            {item.reference_external_id == null ? (
+                                                                                <Menu.Item onPress={() => create_patient_record(item.id)} title="Create Patient Record" />
+                                                                            ) : (null)}
                                                                             <Menu.Item onPress={() => serve(item.id)} title="Serve" />
                                                                             <Menu.Item onPress={() => CancelQ(item.id)} title="Cancel" />
                                                                         </>
@@ -492,13 +571,28 @@ const AppointmentPerClinic = ({ route, navigation }) => {
 
                                                                         item.status == 'serving' ? (
                                                                             <>
+                                                                                {item.reference_external_id == null ? (
+                                                                                    <Menu.Item onPress={() => create_patient_record(item.id)} title="Create Patient Record" />
+                                                                                ) : (null)}
                                                                                 <Menu.Item onPress={() => FinishQ(item.id)} title="Finish" />
                                                                                 <Menu.Item onPress={() => SkipQ(item.id)} title="Skip" />
                                                                                 <Menu.Item onPress={() => CancelQ(item.id)} title="Cancel" />
                                                                             </>
                                                                         )
                                                                             :
-                                                                            (null)
+
+                                                                            item.status == 'skipped' ? (
+                                                                                <>
+                                                                                    {item.reference_external_id == null ? (
+                                                                                        <Menu.Item onPress={() => create_patient_record(item.id)} title="Create Patient Record" />
+                                                                                    ) : (null)}
+                                                                                   
+                                                                                    <Menu.Item onPress={() => serve(item.id)} title="Skip" />
+                                                                                    <Menu.Item onPress={() => CancelQ(item.id)} title="Cancel" />
+                                                                                </>
+                                                                            )
+                                                                                :
+                                                                                (null)
                                                             }
 
 
@@ -530,7 +624,7 @@ const AppointmentPerClinic = ({ route, navigation }) => {
             </ScrollView>
 
 
-            <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={{ height: 80, width: 50, borderRadius: 5}} style={{ justifyContent: 'center', alignItems: 'center', }}>
+            <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={{ height: 80, width: 50, borderRadius: 5 }} style={{ justifyContent: 'center', alignItems: 'center', }}>
                 <View style={{ backgroundColor: 'white', }}>
                     <ActivityIndicator size="large" color="#0000ff" />
                 </View>

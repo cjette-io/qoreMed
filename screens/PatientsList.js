@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {Animated,Image,FlatList, StyleSheet, Text, View,SafeAreaView, ScrollView,TouchableOpacity, Dimensions} from 'react-native'
+import { Animated, ActivityIndicator, Image, FlatList, StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Dimensions } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import FabAddPatient from './components/FabAddPatient'
@@ -11,7 +11,11 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+
+import PatientEmpty from '../assets/images/PatientDoctor.jpg'
 import notes from '../assets/icons/note.png'
+
+
 
 //Size Screen
 
@@ -24,42 +28,74 @@ import URL from '../api'
 
 
 const PatientsList = ({ navigation }) => {
-    
+
     const [PatientDataList, setPatientDataList] = useState([])
+    const [loading, setLoading] = useState(true)
+    React.useEffect(async () => {
 
-    useEffect(async() => {
-        let token;
-        token = await AsyncStorage.getItem('userToken');
-
-        fetch(URL + 'api/v1/patients', {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + token
-            }
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                //  console.log(JSON.stringify(json));
-                 setPatientDataList(json.data)
-
+        const unsubscribe = navigation.addListener('focus', async () => {
+            // setLoading(true)
+            let token;
+            token = await AsyncStorage.getItem('userToken');
+            fetch(URL + 'api/v1/patients', {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token
+                }
             })
-            .catch((error) => {
+                .then((response) => response.json())
+                .then((json) => {
+                  console.log(JSON.stringify(json));
+                    setPatientDataList(json.data)
+                    setLoading(false)
 
-                console.log(error);
+                })
+                .catch((error) => {
 
-            });
+                    console.log(error);
 
-    },[])
+                });
+
+
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+    // useEffect(async() => {
+    //     let token;
+    //     token = await AsyncStorage.getItem('userToken');
+
+    //     fetch(URL + 'api/v1/patients', {
+    //         method: 'GET',
+    //         headers: {
+    //             Accept: 'application/json',
+    //             'Content-Type': 'application/json',
+    //             Authorization: 'Bearer ' + token
+    //         }
+    //     })
+    //         .then((response) => response.json())
+    //         .then((json) => {
+    //             //  console.log(JSON.stringify(json));
+    //              setPatientDataList(json.data)
+
+    //         })
+    //         .catch((error) => {
+
+    //             console.log(error);
+
+    //         });
+
+    // },[])
 
     const GotoProfile = (PatientID) => {
-       navigation.navigate('PatientProfile',PatientID)
+        navigation.navigate('PatientProfile', PatientID)
     }
 
     const userTap = () => {
         // navigation.navigate('MedicationAddScreen', Patient_ID)
-       navigation.navigate('PatientAddScreen')
+        navigation.navigate('PatientAddScreen')
     }
 
 
@@ -79,15 +115,15 @@ const PatientsList = ({ navigation }) => {
                 return (
                     <TouchableOpacity onPress={() => alert(item.id)} activeOpacity={0.6}>
                         <View style={styles.deleteBox}>
-                            <Entypo name="trash" size={20} color="white"/>
-                            <Animated.Text style={{color:'white', fontWeight:'bold'}}>
+                            <Entypo name="trash" size={20} color="white" />
+                            <Animated.Text style={{ color: 'white', fontWeight: 'bold' }}>
                                 Delete
-                             </Animated.Text>
+                            </Animated.Text>
                         </View>
                     </TouchableOpacity>
                 );
             };
-        
+
             const LeftSwipe = (progress, dragX) => {
                 const scale = dragX.interpolate({
                     inputRange: [0, 100],
@@ -97,32 +133,31 @@ const PatientsList = ({ navigation }) => {
                 return (
                     <TouchableOpacity activeOpacity={0.6}>
                         <View style={styles.deleteBox}>
-                        <AntDesign name="edit" size={20} color="white"/>
-                        <Animated.Text style={{color:'white', fontWeight:'bold'}}>
+                            <AntDesign name="edit" size={20} color="white" />
+                            <Animated.Text style={{ color: 'white', fontWeight: 'bold' }}>
                                 Edit
-                      </Animated.Text>
+                            </Animated.Text>
                         </View>
                     </TouchableOpacity>
                 );
             };
 
             return (
-                <>
-                
-                    <View key={i + '-' + item.id} >
-                <Swipeable renderLeftActions={LeftSwipe} renderRightActions={rightSwipe}>
-                   
-                        <TouchableOpacity onPress={() => GotoProfile(item.id)} style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%',  marginBottom:10 }}>
-                            <View style={{flexDirection:'row', justifyContent: 'space-between',flex:1}}>
 
-                                <View style={{flex:1}}>
+                <View key={i + '-' + item.id} >
+                    <Swipeable renderLeftActions={LeftSwipe} renderRightActions={rightSwipe}>
 
-                                    <View style={{flex:1}}>
+                        <TouchableOpacity onPress={() => GotoProfile(item.id)} style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', marginBottom: 10 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
+
+                                <View style={{ flex: 1 }}>
+
+                                    <View style={{ flex: 1 }}>
                                         <Text numberOfLines={2} style={{ fontSize: 18 }}>{item.full_name} </Text>
-                                        <View style={{flexDirection:'row',alignItems: 'center',}}>
-                                        <View style={{height:10, width:10,borderRadius:10, backgroundColor:'pink', marginRight:5}}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                                            <View style={{ height: 10, width: 10, borderRadius: 10, backgroundColor: 'pink', marginRight: 5 }}>
 
-                                        </View>
+                                            </View>
                                             <Text>{item.profile.gender}</Text>
                                         </View>
                                     </View>
@@ -133,19 +168,19 @@ const PatientsList = ({ navigation }) => {
 
 
 
-                                <View style={{ justifyContent:"center", alignItems:'center'}}>
-                                <Image source={notes}></Image>
+                                <View style={{ justifyContent: "center", alignItems: 'center' }}>
+                                    <Image source={notes}></Image>
                                 </View>
 
                             </View>
 
 
                         </TouchableOpacity>
-                </Swipeable>
-                    </View>
+                    </Swipeable>
+                </View>
 
 
-                </>
+
             )
         }
 
@@ -156,25 +191,35 @@ const PatientsList = ({ navigation }) => {
         return (
             <View style={{ flex: 1 }}>
 
-            <FlatList
+                <FlatList
 
 
-                contentContainerStyle={{ paddingBottom: 50 }}
-                data={PatientDataList}
-                vertical
-                showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 50 }}
+                    data={PatientDataList}
+                    vertical
+                    showsVerticalScrollIndicator={false}
 
-                keyExtractor={item => `${item.id}`}
-                renderItem={renderItem}
+                    keyExtractor={item => `${item.id}`}
+                    renderItem={renderItem}
 
-            />
-        </View>
+                />
+            </View>
         )
     }
 
+
+    if (loading == true) {
+        return (
+            <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#2196f3" />
+            </View>
+        )
+    }
+
+
     return (
         < >
-         <SafeAreaView
+            <SafeAreaView
                 style={{ padding: 10, backgroundColor: 'white' }}
             >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -190,17 +235,26 @@ const PatientsList = ({ navigation }) => {
                     </View>
 
                     <TouchableOpacity>
-                    <EvilIcons name="search" size={25}/>
+                        <EvilIcons name="search" size={25} />
                     </TouchableOpacity>
 
 
                 </View>
             </SafeAreaView>
-            <View style={styles.container}>
-                    {PatientListItem()}
+            <View style={[styles.container, { justifyContent: PatientDataList.length < 1 ? 'center' : null }]}>
 
 
-                    <FabAddPatient tap={userTap} />
+                {PatientDataList.length < 1 ? (
+                    <View>
+                        <Image source={PatientEmpty} style={{ width: '100%', height: 200 }} />
+                        <Text style={{ textAlign: 'center', fontSize: 18, fontWeight: 'bold' }}>No Available Patient</Text>
+                        <Text style={{ textAlign: 'center', marginTop: 2 }}>To add, just tap the plus button</Text>
+                    </View>
+                ) : PatientListItem()}
+
+
+
+                <FabAddPatient tap={userTap} />
             </View>
         </>
     )
@@ -211,7 +265,8 @@ export default PatientsList
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10
+        padding: 10,
+        backgroundColor: 'white'
     },
     deleteBox: {
         backgroundColor: '#008FFB',
@@ -219,6 +274,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 100,
         height: '90%',
-      
+
     },
 })

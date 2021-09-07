@@ -51,6 +51,16 @@ const PatientAddScreen = ({ navigation }) => {
     const [selectedbloodtype, setselectedbloodtype] = React.useState(0);
     const [insertDate, setInsertDate] = useState('')
 
+    const [errFname, seterrFname] = React.useState('')
+    const [errMname, seterrMname] = React.useState('')
+    const [errLname, seterrLname] = React.useState('')
+    const [errGender, seterrGender] = React.useState('')
+
+    const [errbdate, seterrbdate] = useState(null)
+
+    const [isSaving, setisSaving] = useState(false)
+
+
     useEffect(async () => {
         let token;
         token = await AsyncStorage.getItem('userToken');
@@ -141,6 +151,12 @@ const PatientAddScreen = ({ navigation }) => {
         // console.log(selectedbloodtype)
         // console.log(nationality)
 
+        seterrFname(null)
+        seterrLname(null)
+        seterrGender(null)
+        seterrbdate(null)
+        setisSaving(true)
+
         let token;
         token = await AsyncStorage.getItem('userToken');
 
@@ -151,21 +167,50 @@ const PatientAddScreen = ({ navigation }) => {
                 'Content-Type': 'application/json',
                 Authorization: 'Bearer ' + token
             }, body: JSON.stringify({
-                last_name:Lname,
-                first_name:Fname,
-                middle_name:Mname,
-                suffix:suffix,
-                birthday:insertDate,
-                gender:selectedgender,
-                civil_status_id:selectedCivil,
-                blood_type_id:selectedbloodtype,
-                nationality:nationality
+                last_name: Lname,
+                first_name: Fname,
+                middle_name: Mname,
+                suffix: suffix,
+                birthday: insertDate,
+                gender: selectedgender,
+                civil_status_id: selectedCivil,
+                blood_type_id: selectedbloodtype,
+                nationality: nationality
             })
         })
             .then((response) => response.json())
             .then((json) => {
 
                 console.log(json)
+
+                if (json.message === "The given data was invalid.") {
+                    if ('first_name' in json.errors) {
+                        seterrFname(json.errors.first_name[0])
+                    }
+
+                    if ('last_name' in json.errors) {
+                        seterrLname(json.errors.last_name[0])
+                    }
+
+                    if ('gender' in json.errors) {
+                        seterrGender(json.errors.gender[0])
+                    }
+
+                    if ('birthday' in json.errors) {
+                        seterrbdate(json.errors.birthday[0])
+                      }
+
+                      if ('middle_name' in json.errors) {
+                        seterrMname(json.errors.middle_name[0])
+                      }   
+
+                      setisSaving(false)
+
+                }else{
+                    alert('Record Successfully saved')
+                    setisSaving(false)
+                    navigation.goBack()
+                }
 
             })
             .catch((error) => {
@@ -198,8 +243,8 @@ const PatientAddScreen = ({ navigation }) => {
                         <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>New Patient</Text>
                     </View>
 
-                    <TouchableOpacity onPress={() => SavePatientInfo()}>
-                        <Text style={{ color: '#008FFB' }}>DONE</Text>
+                    <TouchableOpacity onPress={() => isSaving == true ? null : SavePatientInfo()}>
+                        <Text style={{ color: isSaving == true ? 'rgba(33,150,243, 0.3)' : '#008FFB' }}>{isSaving == true ? 'Saving...' : 'DONE'}</Text>
                     </TouchableOpacity>
 
 
@@ -214,8 +259,9 @@ const PatientAddScreen = ({ navigation }) => {
                 style={{ padding: 20, flex: 1, backgroundColor: 'white' }}
             >
                 <View style={{ flex: 1, marginVertical: 10 }}>
-                    <View style={{ marginVertical: 10, left: 10 }}>
+                    <View style={{ marginVertical: 10, left: 10, }}>
                         <Text style={{ fontWeight: '700' }}>Name</Text>
+
                     </View>
                     <View>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10, }}
@@ -223,14 +269,17 @@ const PatientAddScreen = ({ navigation }) => {
                             value={Fname}
                             onChangeText={(text) => setFname(text)}
                         ></TextInput>
+                        {!errFname ? null : <Text style={{ fontSize: 10, color: 'red' }}>{errFname}</Text>}
+
                     </View>
 
                     <View style={{ marginVertical: 10 }}>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }}
-                            placeholder="Middle Name"
+                            placeholder="Middle Name*"
                             value={Mname}
                             onChangeText={(text) => setMname(text)}
                         ></TextInput>
+                          {!errMname ? null : <Text style={{ fontSize: 10, color: 'red' }}>{errMname}</Text>}
                     </View>
                     <View>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }}
@@ -238,6 +287,7 @@ const PatientAddScreen = ({ navigation }) => {
                             value={Lname}
                             onChangeText={(text) => setLname(text)}
                         ></TextInput>
+                        {!errLname ? null : <Text style={{ fontSize: 10, color: 'red' }}>{errLname}</Text>}
                     </View>
                     <View style={{ marginVertical: 10 }}>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }}
@@ -251,9 +301,12 @@ const PatientAddScreen = ({ navigation }) => {
                         <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Birthday</Text>
                         <TouchableOpacity style={{ marginVertical: 10 }} onPress={() => showDatePicker()}>
                             <View>
-                                <Text style={[styles.inputs, { color: '#999', }]}>{!insertDate ? 'mm/dd/yyyy' : insertDate}</Text>
+                                <Text style={[styles.inputs, { color: '#999', }]}>{!insertDate ? 'mm/dd/yyyy*' : insertDate}</Text>
                             </View>
                         </TouchableOpacity>
+                        <View>
+                        {!errbdate ? null : <Text style={{ fontSize: 10, color: 'red' }}> {errbdate}</Text>}
+                    </View>
                     </View>
 
 
@@ -261,20 +314,27 @@ const PatientAddScreen = ({ navigation }) => {
                         <Text style={{ fontWeight: '700' }}>Gender</Text>
                     </View>
 
-                    <View style={{ flexDirection: 'row', }}>
-                        {GenderOption.map((item, i) => {
-                            return (
-                                <View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <RadioButton
+                    <View>
+                        <View style={{ flexDirection: 'row', }}>
+                            {GenderOption.map((item, i) => {
+                                return (
+                                    <View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <RadioButton
 
 
-                                        status={selectedgender === item.gender_id ? 'checked' : 'unchecked'}
-                                        onPress={() => rbgender(i, item.gender_id)}
-                                    />
-                                    <Text style={{ fontSize: 16 }}>{item.gender_name}</Text>
-                                </View>
-                            )
-                        })}
+                                            status={selectedgender === item.gender_id ? 'checked' : 'unchecked'}
+                                            onPress={() => rbgender(i, item.gender_id)}
+                                        />
+                                        <Text style={{ fontSize: 16 }}>{item.gender_name}</Text>
+                                    </View>
+                                )
+                            })}
+
+
+
+                        </View>
+
+                        {!errGender ? null : <Text style={{ fontSize: 10, color: 'red' }}>{errGender}</Text>}
                     </View>
 
 

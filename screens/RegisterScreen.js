@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, Image, ImageBackground, ScrollView, Dimensions, TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
+import {ActivityIndicator, StyleSheet, Text, View, Image, ImageBackground, ScrollView, Dimensions, TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 
@@ -45,6 +45,7 @@ const RegisterScreen = ({ navigation }) => {
   const [loginAuth, setloginAuth] = useState('')
 
   const [signInwith, setSignInWith] = useState(true)
+  const [isLoading,setisLoading] = useState(false)
 
     const [fname, setFname] = useState("")
     const [lname, setLname] = useState("")
@@ -99,6 +100,7 @@ const RegisterScreen = ({ navigation }) => {
     const signup = () => {
 
         // reset()
+        setisLoading(true)
 
         seterrMobile(null)
         seterremail(null)
@@ -157,10 +159,12 @@ const RegisterScreen = ({ navigation }) => {
                   seterrpword(json.errors.password[0]) 
                 }
 
+                setisLoading(false)
 
               
             }else if(json.message === "Thanks for signing up!"){
                 alert(json.message)
+                setisLoading(false)
                 navigation.navigate('LoginScreen')
             }
 
@@ -224,10 +228,11 @@ const RegisterScreen = ({ navigation }) => {
                   seterrpword(json.errors.password[0]) 
                 }
 
-
+                setisLoading(false)
               
             }else if(json.message === "Thanks for signing up!"){
                 alert(json.message)
+                setisLoading(false)
                 navigation.navigate('LoginScreen')
             }
 
@@ -445,8 +450,12 @@ const getInfoFromToken = (token) => {
 
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => signup()} style={{ padding: 10, backgroundColor: '#2196f3', borderRadius: 5, alignItems: 'center' }}>
+                    <TouchableOpacity onPress={() => isLoading == true ? null : signup()} style={{ padding: 10, backgroundColor: isLoading == true ? 'rgba(33,150,243, 0.3)' :'#2196f3', borderRadius: 5, alignItems: 'center', flexDirection:'row', justifyContent: 'center'}}>
+                        
                         <Text style={{ color: 'white', fontSize: 16, }}>Sign up</Text>
+                        {isLoading == true ? (
+                          <ActivityIndicator size="small" color="white" style={{left:10}} />
+                        ) : (null)}
                     </TouchableOpacity>
 
 

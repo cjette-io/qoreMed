@@ -32,6 +32,8 @@ const PatientProfile = ({navigation, route}) => {
     const [BloodType, setBloodType] = useState('')
     const [CivilStatus,setCivilStatus] = useState('')
     const [Gender, setGender] = useState('')
+    const [mobile,setMobile] = useState('')
+    const [email,setEmail] = useState('')
 
     useEffect(async() => {
         let token;
@@ -50,7 +52,7 @@ const PatientProfile = ({navigation, route}) => {
             .then((json) => {
               
               
-               // console.log(JSON.stringify(json))
+               console.log(JSON.stringify(json))
 
                  setPatientData(json)
                  if (json.profile.birthday != null)
@@ -73,6 +75,15 @@ const PatientProfile = ({navigation, route}) => {
                  {
                     setGender(json.profile.gender)
                  }
+
+
+                 if (json.contact.email != null){
+                     setEmail(json.contact.email)
+                 }
+
+                 if (json.contact.phone_number != null){
+                    setMobile(json.contact.phone_number)
+                }
 
                
     
@@ -128,26 +139,43 @@ const PatientProfile = ({navigation, route}) => {
                     </View>
 
                         <View style={{marginTop:5, padding:20}}>
-                                <View style={{flexDirection: 'row', }}>
-                                    <Text>Birthdate: {moment(PatientBday).format('ll')}</Text>  
-                                     
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={{fontWeight:'bold'}}>Birthdate: </Text>  
+                                     <Text>{moment(PatientBday).format('ll')}</Text>
                                 </View>   
                                 <View style={{flexDirection: 'row', }}>
                                     {/* <Text>Gender:{Patient_Data.profile.gender}</Text>   */}
                                      
                                 </View> 
-                                <View style={{flexDirection: 'row', }}>
-                                    <Text>BloodType: {BloodType}</Text>  
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={{fontWeight:'bold'}}>BloodType:</Text>  
+                                    <Text>{BloodType}</Text>
+                                </View>  
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={{fontWeight:'bold'}}>Civil Status:</Text>  
+                                    <Text>{CivilStatus}</Text>
                                      
                                 </View>  
-                                <View style={{flexDirection: 'row', }}>
-                                    <Text>Civil Status: {CivilStatus}</Text>  
-                                     
-                                </View>  
-                                <View style={{flexDirection: 'row', }}>
-                                    <Text>Gender: {Gender === 'male' ? 'MALE' : 'FEMALE'}</Text>  
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={{fontWeight:'bold'}}>Gender:</Text> 
+                                    <Text>{Gender === 'male' ? 'MALE' : 'FEMALE'}</Text> 
                                      
                                 </View> 
+
+                                <View style={{width: '100%',borderWidth:0.5, borderColor:'gray', marginVertical:10}}/>
+
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={{fontWeight:'bold'}}>Phone:</Text> 
+                                    <Text>{mobile != '' ? mobile : ''}</Text> 
+                                     
+                                </View> 
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={{fontWeight:'bold'}}>Email:</Text> 
+                                    <Text>{email != '' ? email : ''}</Text> 
+                                     
+                                </View> 
+
+                                
 
                     <View>
                         

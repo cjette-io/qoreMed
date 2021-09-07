@@ -18,6 +18,9 @@ import moment from 'moment'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import URL from '../../api'
+
+import FabSubstance from './component/FabSubstance'
+
 const Substances = ({ navigation, route }) => {
 
     const Patient_ID = route.params
@@ -26,8 +29,8 @@ const Substances = ({ navigation, route }) => {
 
 
 
-    useEffect(async () => {
-
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', async() => {
         console.log(Patient_ID)
         let token;
         token = await AsyncStorage.getItem('userToken');
@@ -53,11 +56,15 @@ const Substances = ({ navigation, route }) => {
                 console.log(error);
 
             });
+        });
+        return unsubscribe;
 
-    }, [])
+    }, [navigation])
 
 
-
+    const userTap = () => {
+        navigation.navigate('SubstanceAddScreen',Patient_ID)
+    }
 
 
     return (
@@ -178,7 +185,7 @@ const Substances = ({ navigation, route }) => {
 
                 </View>
 
-
+                <FabSubstance tap={userTap} />
 
             </View>
         </>

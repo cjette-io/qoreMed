@@ -10,6 +10,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import notes from '../../assets/icons/note.png'
 
+import FabAllergies from './component/FabAllergies'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import URL from '../../api'
@@ -19,9 +20,9 @@ const Allergies = ({navigation, route}) => {
     const [AllergyHistoryData, setAllergyHistoryData] = useState([])
 
 
-    useEffect(async() => {
+    useEffect(() => {
 
-        
+        const unsubscribe = navigation.addListener('focus', async() => {
         let token;
         token = await AsyncStorage.getItem('userToken');
         
@@ -37,7 +38,7 @@ const Allergies = ({navigation, route}) => {
             .then((json) => {
               
               
-                 console.log(JSON.stringify(json.data))
+                
                  setAllergyHistoryData(json.data)
     
             })
@@ -46,12 +47,13 @@ const Allergies = ({navigation, route}) => {
                 console.log(error);
     
             });
-    
-      },[])
+        });
+        return unsubscribe;
+      },[navigation])
 
-    //   const userTap = () => {
-    //     navigation.navigate('MedicationAddScreen',Patient_ID)
-    // }
+      const userTap = () => {
+        navigation.navigate('AllergyAddScreen',Patient_ID)
+    }
 
 
     const AllergyList = () => {
@@ -191,7 +193,8 @@ const Allergies = ({navigation, route}) => {
                 {AllergyList()}
 
 
-                {/* <FabProcedure /> */}
+                <FabAllergies tap={userTap} />
+
 
             </View>
        </>

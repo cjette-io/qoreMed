@@ -4,15 +4,26 @@ import { createStackNavigator } from "@react-navigation/stack";
 import {
   PatientsList,
   PatientAddScreen,
+
   PatientProfile,
+
   HistoryList,
+
   Medications,
   MedicationAddScreen,
+
   Vaccination,
   VaccinationAddScreen,
+
   Procedures,
+  ProcedureAddScreen,
+
   Allergies,
+  AllergyAddScreen,
+
   Substances,
+  SubstanceAddScreen,
+
   SexualHistory,
   MedicalHistory,
   FamilyHistory,
@@ -38,13 +49,22 @@ const PatientsContentScreen = () => (
     <Patients.Screen name="PatientAddScreen" component={PatientAddScreen} />
     <Patients.Screen name="PatientProfile" component={PatientProfile} />
     <Patients.Screen name="HistoryList" component={HistoryList} />
+    
     <Patients.Screen name="Medications" component={Medications} />
     <Patients.Screen name="MedicationAddScreen" component={MedicationAddScreen} />
+    
     <Patients.Screen name="Vaccination" component={Vaccination} />
     <Patients.Screen name="VaccinationAddScreen" component={VaccinationAddScreen} />
+    
     <Patients.Screen name="Procedures" component={Procedures} />
+    <Patients.Screen name="ProcedureAddScreen" component={ProcedureAddScreen} />
+    
     <Patients.Screen name="Allergies" component={Allergies} />
+    <Patients.Screen name="AllergyAddScreen" component={AllergyAddScreen} />
+    
     <Patients.Screen name="Substances" component={Substances} />
+    <Patients.Screen name="SubstanceAddScreen" component={SubstanceAddScreen} />
+
     <Patients.Screen name="SexualHistory" component={SexualHistory} />
     <Patients.Screen name="MedicalHistory" component={MedicalHistory} />
     <Patients.Screen name="FamilyHistory" component={FamilyHistory} />

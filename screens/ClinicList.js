@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {FlatList, StyleSheet, Text, View,SafeAreaView, ScrollView,TouchableOpacity, Dimensions} from 'react-native'
+import {ActivityIndicator,FlatList, StyleSheet, Text, View,SafeAreaView, ScrollView,TouchableOpacity, Image,Dimensions} from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -12,6 +12,8 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+
+import PatientEmpty from '../assets/images/PatientDoctor.jpg'
 import notes from '../assets/icons/note.png'
 
 //Size Screen
@@ -28,7 +30,7 @@ import URL from '../api'
 const ClinicList = ({ navigation }) => {
 
     const [ClinicList, setClinicList] = useState([])
-
+    const [loading,setLoading] = useState(true)
     const numColumns = 3;
     const formatData = (ClinicList, numColumns) => {
         const totalRows = Math.floor(ClinicList.length / numColumns)
@@ -60,7 +62,10 @@ const ClinicList = ({ navigation }) => {
                 .then((json) => {
                      console.log(json);
                    if(json.data.length > 0) {
+                    setLoading(false)
                     setClinicList(json.data)
+                   }else{
+                    setLoading(false)
                    }
 
                 })
@@ -134,7 +139,14 @@ const ClinicList = ({ navigation }) => {
         )
     }
 
-    
+    if (loading == true) {
+        return (
+            <View style={{ flex: 1, backgroundColor: 'white', justifyContent:'center',alignItems: 'center'}}>
+                 <ActivityIndicator size="large" color="#2196f3" />
+            </View>
+        )
+    }
+
 
 
     return (
@@ -151,7 +163,7 @@ const ClinicList = ({ navigation }) => {
                     </View>
 
                     <View style={{ justifyContent: 'center' }}>
-                        <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>Clinics</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>My Clinics</Text>
                     </View>
 
                     <View>
@@ -162,8 +174,14 @@ const ClinicList = ({ navigation }) => {
                 </View>
             </SafeAreaView>
 
-        <View style={{flex:1, padding:10,}}>
-           {ClinicListContent()}
+        <View style={{flex:1, padding:10, backgroundColor: 'white', justifyContent: ClinicList.length < 1 ? 'center' : null}}>
+           {ClinicList.length < 1 ? (
+            <View>
+                    <Image source={PatientEmpty} style={{width: '100%', height: 200}}/>
+                    <Text style={{textAlign: 'center', fontSize: 18, fontWeight: 'bold'}}>Clinic Record is Empty</Text>
+                    <Text style={{textAlign: 'center',marginTop:2}}>To add, just tap the plus button</Text>
+                </View>
+           ) : ClinicListContent()}
 
         <FabAddClinic tap={userTap} />
 
@@ -184,13 +202,16 @@ const styles = StyleSheet.create({
         elevation: 5,
         justifyContent: 'center',
         alignItems: 'center',
-        padding:5
+        padding:5,
+        borderColor: "rgba(33,150,243, 0.3)",
+        borderWidth: 1,
         
 
 
     },
     ItemInvisible: {
         backgroundColor: 'transparent',
-        elevation: 0
+        elevation: 0,
+        borderWidth: 0,
     }
 })

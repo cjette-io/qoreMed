@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { StyleSheet, Text, View, Image, ImageBackground, ScrollView, Dimensions, TextInput, TouchableOpacity } from 'react-native'
+import {ActivityIndicator, StyleSheet, Text, View, Image, ImageBackground, ScrollView, Dimensions, TextInput, TouchableOpacity } from 'react-native'
 
 const { width, height } = Dimensions.get('window')
 
@@ -43,6 +43,7 @@ const LoginScreen = ({ navigation }) => {
 
   const [manualIDTOKEN , setmanualIDTOKEN] = useState('');
 
+  const [isLoading,setisLoading] = useState(false)
 
  const DoctorData = [{
     data: JSON.stringify(userData),
@@ -181,6 +182,8 @@ const getInfoFromToken = (token) => {
     seterrUsername('')
     seterrPassword('')
 
+    setisLoading(true)
+
     fetch(URL + 'api/v1/auth/login', {
       method: 'POST',
       headers: {
@@ -208,6 +211,8 @@ const getInfoFromToken = (token) => {
           if ('password' in json.errors) {
             seterrPassword(json.errors.password[0])
           }
+
+          setisLoading(false)
          }else{
             
             setmanualIDTOKEN(json.token)
@@ -273,8 +278,12 @@ const getInfoFromToken = (token) => {
 
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => ManualLogin()} style={{ padding: 10, backgroundColor: '#2196f3', borderRadius: 5, alignItems: 'center' }}>
+                <TouchableOpacity onPress={() => isLoading == true ? null : ManualLogin()} style={{flexDirection:'row', justifyContent: 'center', padding: 10, backgroundColor: isLoading == true ? 'rgba(33,150,243, 0.3)' : '#2196f3', borderRadius: 5, alignItems: 'center' }}>
                     <Text style={{ color: 'white', fontSize: 16, }}>Login</Text>
+                    {isLoading == true ? (
+                          <ActivityIndicator size="small" color="white" style={{left:10}} />
+                        ) : (null)}
+                
                 </TouchableOpacity>
 
                 <View style={{marginVertical:5}}>

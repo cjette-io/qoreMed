@@ -29,6 +29,8 @@ export default FabAddClinic
 const styles = StyleSheet.create({
     root: {
       backgroundColor: "white",
+      borderColor: "rgba(33,150,243, 0.3)",
+      borderWidth: 1,
       width: 56,
       height: 56,
       position: "absolute",

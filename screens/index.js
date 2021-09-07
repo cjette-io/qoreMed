@@ -29,11 +29,20 @@ import VitalAddScreen from "./VitalAddScreen";
 import { 
     Medications,
     MedicationAddScreen,
+
     Vaccination,
     VaccinationAddScreen,
+
     Procedures,
+    ProcedureAddScreen,
+
     Allergies,
+    AllergyAddScreen,
+
     Substances,
+    SubstanceAddScreen,
+
+
     SexualHistory,
     MedicalHistory,
     FamilyHistory
@@ -49,13 +58,22 @@ export {
     PatientAddScreen,
     PatientProfile,
     HistoryList,
+
     Medications,
     MedicationAddScreen,
+
     Vaccination,
     VaccinationAddScreen,
+
     Procedures,
+    ProcedureAddScreen,
+
     Allergies,
+    AllergyAddScreen,
+    
     Substances,
+    SubstanceAddScreen,
+    
     SexualHistory,
     MedicalHistory,
     FamilyHistory,

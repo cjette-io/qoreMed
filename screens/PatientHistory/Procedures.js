@@ -1,5 +1,5 @@
-import React,{useState, useEffect} from 'react'
-import {Animated, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, TextInput, FlatList } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import {ActivityIndicator, Animated, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, TextInput, FlatList } from 'react-native'
 import FabProcedure from './component/FabProcedure'
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
@@ -17,34 +17,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import URL from '../../api'
 
 
-const Procedures = ({navigation, route}) => {
+const Procedures = ({ navigation, route }) => {
 
     const Patient_ID = route.params
     const [ProcedureHistoryData, setProcedureHistoryData] = useState([])
 
 
-
-    // const ProcedureHistoryData = [
-    //     {
-    //         id: '1001',
-    //         procedureName: "X-ray",
-    //         provider: "Test Provider",
-    //         dateProcedure: "Jul 17, 2021",
-    //         details: "none",
-        
-
-    //     }
-    // ]
-
-    
-
-    useEffect(async() => {
-
+    useEffect( () => {
+        const unsubscribe = navigation.addListener('focus', async() => {
         console.log(Patient_ID)
         let token;
         token = await AsyncStorage.getItem('userToken');
-        
-        fetch(URL + "api/v1/patients/"+Patient_ID+"/history/procedures", {
+
+        fetch(URL + "api/v1/patients/" + Patient_ID + "/history/procedures", {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -54,23 +39,25 @@ const Procedures = ({navigation, route}) => {
         })
             .then((response) => response.json())
             .then((json) => {
-              
-              
-                 console.log(JSON.stringify(json.data))
-                 setProcedureHistoryData(json.data)
-    
+
+
+                console.log(JSON.stringify(json.data))
+                setProcedureHistoryData(json.data)
+
             })
             .catch((error) => {
-    
+
                 console.log(error);
-    
+
             });
-    
-      },[])
-    
-      const userTap = () => {
-          navigation.navigate('MedicationAddScreen',Patient_ID)
-      }
+
+        });
+        return unsubscribe;
+    }, [navigation])
+
+    const userTap = () => {
+        navigation.navigate('ProcedureAddScreen', Patient_ID)
+    }
 
 
     const ProcedureList = () => {
@@ -86,15 +73,15 @@ const Procedures = ({navigation, route}) => {
                 return (
                     <TouchableOpacity onPress={() => alert(item.id)} activeOpacity={0.6}>
                         <View style={styles.deleteBox}>
-                            <Entypo name="trash" size={20} color="white"/>
-                            <Animated.Text style={{color:'white', fontWeight:'bold'}}>
+                            <Entypo name="trash" size={20} color="white" />
+                            <Animated.Text style={{ color: 'white', fontWeight: 'bold' }}>
                                 Delete
-                             </Animated.Text>
+                            </Animated.Text>
                         </View>
                     </TouchableOpacity>
                 );
             };
-        
+
             const LeftSwipe = (progress, dragX) => {
                 const scale = dragX.interpolate({
                     inputRange: [0, 100],
@@ -104,55 +91,61 @@ const Procedures = ({navigation, route}) => {
                 return (
                     <TouchableOpacity activeOpacity={0.6}>
                         <View style={styles.deleteBox}>
-                        <AntDesign name="edit" size={20} color="white"/>
-                        <Animated.Text style={{color:'white', fontWeight:'bold'}}>
+                            <AntDesign name="edit" size={20} color="white" />
+                            <Animated.Text style={{ color: 'white', fontWeight: 'bold' }}>
                                 Edit
-                      </Animated.Text>
+                            </Animated.Text>
                         </View>
                     </TouchableOpacity>
                 );
             };
 
             return (
-                <>
-                
-                    <View key={i + '-' + item.id} >
-                <Swipeable renderLeftActions={LeftSwipe} renderRightActions={rightSwipe}>
-                   
-                        <View style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', height: 110, marginBottom:10 }}>
-                            <View style={{flexDirection:'row', justifyContent: 'space-between',flex:1}}>
+             
 
-                                <View style={{flex:1}}>
+                    <View key={i + '-' + item.id} style={{marginBottom:10}} >
+                        <Swipeable renderLeftActions={LeftSwipe} renderRightActions={rightSwipe}>
 
-                                    <View style={{flex:1}}>
-                                        <Text numberOfLines={2} style={{ fontSize: 20 }}>{item.name} </Text>
-                                        <Text numberOfLines={2} style={{ fontSize: 15 }}>Provider - {item.provider} </Text>
+                            <View style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
+
+                                    <View style={{ flex: 1 }}>
+
+                                        <View style={{ flex: 1 }}>
+                                            <Text numberOfLines={2} style={{ fontSize: 20 }}>{item.name} </Text>
+                                            <Text numberOfLines={2} style={{ fontSize: 15 }}>Provider - {item.provider} </Text>
+                                        </View>
+
+                                        <View style={{ marginTop: 5, flex: 1 }}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                           <Text style={{ fontWeight: 'bold' }}>Date: </Text>
+                                           <Text>{moment(item.date).format('l')}</Text>
+                                           </View>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text style={{ fontWeight: 'bold' }}>Details:</Text>
+                                                <Text>{item.details}</Text>
+                                            </View>
+                                        </View>
+
+
+
                                     </View>
 
-                                    <View style={{ marginTop: 2 }}>
-                                        <Text>Date: {moment(item.date).format('l')}</Text>
-                                       
+
+
+                                    <View style={{ justifyContent: "center", alignItems: 'center' }}>
+                                        <Image source={notes}></Image>
                                     </View>
-
-
 
                                 </View>
 
-
-
-                                <View style={{ justifyContent:"center", alignItems:'center'}}>
-                                <Image source={notes}></Image>
-                                </View>
 
                             </View>
-
-
-                        </View>
-                </Swipeable>
+                        </Swipeable>
                     </View>
 
 
-                </>
+              
             )
         }
 
@@ -179,7 +172,7 @@ const Procedures = ({navigation, route}) => {
     return (
         <>
 
-<SafeAreaView
+            <SafeAreaView
                 style={{ padding: 10, backgroundColor: 'white' }}
             >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -208,7 +201,7 @@ const Procedures = ({navigation, route}) => {
                 {ProcedureList()}
 
 
-                <FabProcedure />
+                <FabProcedure tap={userTap} />
 
             </View>
         </>
@@ -228,6 +221,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 100,
         height: '90%',
-      
+
     },
 })

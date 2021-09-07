@@ -24,9 +24,11 @@ const MedicationAddScreen = ({ navigation, route }) => {
     const containerStyle = { flex: 1, backgroundColor: 'white', padding: 20, margin: 10, borderRadius: 5, marginBottom: 100, };
 
     const [generic_name, setgeneric_name] = useState('')
+    const [brand_name, setbrand_name] = useState('')
+    const [dose, setdose] = useState('')
+    const [note, setNote] = useState('')
 
-
-
+    const [isSaving, setIsSaving] = useState(false)
 
     const [isFromDatePickerVisible, setFromDatePickerVisibility] = useState(false);
     const [isToDatePickerVisible, setToDatePickerVisibility] = useState(false);
@@ -35,6 +37,12 @@ const MedicationAddScreen = ({ navigation, route }) => {
         id: '',
         name: ''
     })
+
+    const [Qty, setQty] = useState('')
+
+    const [fromDate, setFromDate] = useState('')
+    const [toDate, setToDate] = useState('')
+
 
     const [formMedication, setformMedication] = useState([])
 
@@ -62,6 +70,7 @@ const MedicationAddScreen = ({ navigation, route }) => {
 
         const DataDate = newMonth + '/' + newDate + '/' + newyear;
         console.log(DataDate);
+        setFromDate(DataDate)
         setFromDatePickerVisibility(false);
 
     }
@@ -73,6 +82,7 @@ const MedicationAddScreen = ({ navigation, route }) => {
 
         const DataDate = newMonth + '/' + newDate + '/' + newyear;
         console.log(DataDate);
+        setToDate(DataDate)
         setToDatePickerVisibility(false);
 
     }
@@ -106,7 +116,7 @@ const MedicationAddScreen = ({ navigation, route }) => {
 
                 setformMedication(json)
 
-                console.log(JSON.stringify(json))
+               
 
             })
             .catch((error) => {
@@ -118,9 +128,64 @@ const MedicationAddScreen = ({ navigation, route }) => {
     }, [])
 
 
-    const AddMedicationBtn = () => {
+    const AddMedicationBtn = async() => {
 
-        alert('Coming Soon')
+        setIsSaving(true)
+
+        if (generic_name == '' || brand_name == '' || dose == "" || medicineForm.id == '' || Qty == '' ) {
+                alert('All fields are required')
+                setIsSaving(false)
+        }else{
+
+            let token;
+            token = await AsyncStorage.getItem('userToken');
+    
+            fetch(URL + "api/v1/patients/" + Patient_ID + "/history/medications", {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token
+                },
+                body: JSON.stringify({
+                    generic_name: generic_name,
+                    brand_name: brand_name,
+                    dose: dose,
+                    medication_form_id: medicineForm.id,
+                    quantity: Qty,
+                    medication_frequency_id: 1,
+                    duration_from: fromDate,
+                    duration_to: toDate,
+                    note: note
+                })
+            })
+                .then((response) => response.json())
+                .then((json) => {
+                    
+                    console.log(json)
+                   
+                  if(json.message === "The given data was invalid."){
+    
+                   
+                    setIsSaving(false)
+                    }else{
+                        alert('Data successfully saved')
+                        setIsSaving(false)
+                        navigation.goBack()
+                    }
+    
+    
+    
+                })
+                .catch((error) => {
+    
+                    console.log(error);
+    
+                });
+        }
+
+
+
 
     }
 
@@ -142,9 +207,9 @@ const MedicationAddScreen = ({ navigation, route }) => {
                     </View>
 
                     <TouchableOpacity
-                     onPress={() => AddMedicationBtn()}
+                     onPress={() => isSaving == true ? null : AddMedicationBtn()}
                     >
-                        <Text style={{ color: '#008FFB' }}>DONE</Text>
+                        <Text style={{ color: '#008FFB' }}>{isSaving == true ? 'Saving..' : 'DONE'}</Text>
                     </TouchableOpacity>
 
 
@@ -157,7 +222,7 @@ const MedicationAddScreen = ({ navigation, route }) => {
                 bounces={false} style={{ flex: 1, backgroundColor: 'white', padding: 20 }}
             >
                 <View>
-                    <Text>Generic Name*</Text>
+                    <Text style={{fontWeight: 'bold', fontSize:16}}>Generic Name*</Text>
                     <TextInput
                         value={generic_name}
                         onChangeText={(text) => setgeneric_name(text)}
@@ -165,19 +230,21 @@ const MedicationAddScreen = ({ navigation, route }) => {
                         placeholder="Insert generic name"></TextInput>
                 </View>
                 <View>
-                    <Text>Brand Name</Text>
+                    <Text style={{fontWeight: 'bold', fontSize:16}}>Brand Name</Text>
                     <TextInput
+                      onChangeText={(text) => setbrand_name(text)}
                         style={styles.inputs}
                         placeholder="Insert brand name"></TextInput>
                 </View>
                 <View>
-                    <Text>Dose</Text>
+                    <Text style={{fontWeight: 'bold', fontSize:16}}>Dose</Text>
                     <TextInput
+                    onChangeText={(text) => setdose(text)}
                         style={styles.inputs}
                         placeholder="Insert dose"></TextInput>
                 </View>
                 <View >
-                    <Text>Medicine Form</Text>
+                    <Text style={{fontWeight: 'bold', fontSize:16}}>Medicine Form</Text>
 
                     <TouchableWithoutFeedback onPress={() => showModal()} style={{ marginTop: 5, }}>
                         <View>
@@ -186,43 +253,46 @@ const MedicationAddScreen = ({ navigation, route }) => {
                     </TouchableWithoutFeedback>
                 </View>
                 <View>
-                    <Text>Qty</Text>
+                    <Text style={{fontWeight: 'bold', fontSize:16}}>Qty</Text>
                     <TextInput
+                        onChangeText={(text) =>setQty(text)}
+                         keyboardType="numeric"
                         style={styles.inputs}
                         placeholder="Insert quantity"></TextInput>
                 </View>
 
                 <View>
-                    <Text>Frequency</Text>
+                    <Text style={{fontWeight: 'bold', fontSize:16}}>Frequency</Text>
                     <TextInput
                         style={styles.inputs}
                         placeholder="Select sig frequency"></TextInput>
                 </View>
 
                 <View>
-                    <Text>Duration</Text>
+                    <Text style={{fontWeight: 'bold', fontSize:16}}>Duration</Text>
 
                     <View>
-                        <Text>From</Text>
+                        <Text>(Insert date from)</Text>
                         <TouchableWithoutFeedback onPress={() => showFromDatePicker()} style={{ marginTop: 5, }}>
                             <View>
-                                <Text style={[styles.inputs, { color: '#999', }]}>{!dfdpicker ? 'mm/dd/yyyy' : dfdpicker}</Text>
+                                <Text style={[styles.inputs, { color: '#999', }]}>{!fromDate ? 'mm/dd/yyyy' : fromDate}</Text>
                             </View>
                         </TouchableWithoutFeedback>
                     </View>
                     <View>
-                        <Text>To</Text>
+                        <Text>(Insert date to)</Text>
 
                         <TouchableWithoutFeedback onPress={() => showToDatePicker()} style={{ marginTop: 5, }}>
                             <View>
-                                <Text style={[styles.inputs, { color: '#999', }]}>{!dfdpicker ? 'mm/dd/yyyy' : dfdpicker}</Text>
+                                <Text style={[styles.inputs, { color: '#999', }]}>{!toDate ? 'mm/dd/yyyy' : toDate}</Text>
                             </View>
                         </TouchableWithoutFeedback>
                     </View>
 
                     <View>
-                        <Text>Note</Text>
+                        <Text style={{fontWeight: 'bold', fontSize:16}}>Note</Text>
                         <TextInput
+                            onChangeText={(text) =>setNote(text)}
                             style={styles.inputs}
                             placeholder="Insert note"></TextInput>
                     </View>
@@ -294,3 +364,6 @@ const styles = StyleSheet.create({
 
     }
 })
+
+
+

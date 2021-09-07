@@ -60,8 +60,9 @@ const ExpandableComponent = ({ item, onClickFunction }) => {
                 {
 
                     item.items.map((item, index) => (
-                        <TouchableOpacity key={index} style={{marginVertical:5}}>
-                            <Text>{item.vital_type.name} - {item.vital}</Text>
+                        <TouchableOpacity key={index} style={{marginVertical:5, flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{fontWeight: 'bold'}}>{item.vital_type.name} - </Text>
+                            <Text style={{color:'#2196f3'}}>{item.vital}</Text>
                         </TouchableOpacity>
                     ))
 

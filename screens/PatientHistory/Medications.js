@@ -38,33 +38,35 @@ const Medications = ({ navigation, route }) => {
     //     }
     // ]
 
-    useEffect(async () => {
-        let token;
-        token = await AsyncStorage.getItem('userToken');
-
-        fetch(URL + "api/v1/patients/" + Patient_ID + "/history/medications", {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + token
-            }
-        })
-            .then((response) => response.json())
-            .then((json) => {
-
-
-                console.log(JSON.stringify(json.data))
-                setPatientMedicationList(json.data)
-
+    useEffect( () => {
+        const unsubscribe = navigation.addListener('focus', async() => {
+            let token;
+            token = await AsyncStorage.getItem('userToken');
+    
+            fetch(URL + "api/v1/patients/" + Patient_ID + "/history/medications", {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token
+                }
             })
-            .catch((error) => {
-
-                console.log(error);
-
-            });
-
-    }, [])
+                .then((response) => response.json())
+                .then((json) => {
+    
+    
+                    // console.log(JSON.stringify(json))
+                    setPatientMedicationList(json.data.reverse())
+    
+                })
+                .catch((error) => {
+    
+                    console.log(error);
+    
+                });
+        });
+        return unsubscribe;
+    }, [navigation])
 
     const userTap = () => {
         navigation.navigate('MedicationAddScreen', Patient_ID)
@@ -113,12 +115,12 @@ const Medications = ({ navigation, route }) => {
             };
 
             return (
-                <>
+                
 
                     <View key={i + '-' + item.id} >
                         <Swipeable renderLeftActions={LeftSwipe} renderRightActions={rightSwipe}>
 
-                            <View style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', }}>
+                            <View style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', marginVertical:5 }}>
                                 <View style={{ flex: 1 }}>
 
                                     <View style={{ flex: 1 }}>
@@ -162,7 +164,6 @@ const Medications = ({ navigation, route }) => {
                     </View>
 
 
-                </>
             )
         }
 
@@ -173,7 +174,7 @@ const Medications = ({ navigation, route }) => {
 
 
                     contentContainerStyle={{ paddingBottom: 50 }}
-                    data={PatientMedicationList}
+                    data={PatientMedicationList.reverse()}
                     vertical
                     showsVerticalScrollIndicator={false}
 

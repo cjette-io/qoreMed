@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import {RefreshControl, StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native'
+import { Alert,ActivityIndicator, RefreshControl, StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 // Icon Set
 import IconION from 'react-native-vector-icons/Ionicons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Ant from 'react-native-vector-icons/AntDesign';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import IconMCI from 'react-native-vector-icons/MaterialIcons';
 
@@ -19,21 +19,22 @@ import LogoQoreMed from '../assets/logo/QoreMed_Logo-Landscape-Full-Color-Text.p
 // Url Based
 import URL from '../api'
 
+import { AuthContext } from '../context';
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
-  }
-  
+}
+
 
 const HomeScreen = ({ navigation }) => {
 
-
+    const { LogoutMe } = React.useContext(AuthContext);
     const [refreshing, setRefreshing] = React.useState(false);
 
     const onRefresh = React.useCallback(() => {
-      setRefreshing(true);
-      loadClinicSchedule()
-      wait(2000).then(() => setRefreshing(false));
+        setRefreshing(true);
+        loadClinicSchedule()
+        wait(2000).then(() => setRefreshing(false));
     }, []);
 
     const [userFName, setuserFName] = useState('');
@@ -43,7 +44,7 @@ const HomeScreen = ({ navigation }) => {
     const [clinicList, setClinicList] = useState([])
     const [appointmentToday, setappointmentToday] = useState([])
 
-
+    const [isLoading, setLoading] = useState(true)
     useEffect(() => {
         setTimeout(async () => {
 
@@ -114,102 +115,120 @@ const HomeScreen = ({ navigation }) => {
 
     }, [])
 
-  async function loadClinicSchedule () {
-    let token;
-    token = await AsyncStorage.getItem('userToken');
+    async function loadClinicSchedule() {
+        let token;
+        token = await AsyncStorage.getItem('userToken');
 
-    fetch(URL + 'api/v1/clinics', {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token
-        }
-    })
-        .then((response) => response.json())
-        .then((json) => {
-
-            let MappedClinicData = []
-            let response = json.data;
-            let promises = [];
-            let Appointment = [];
-            if (response.length > 0) {
-
-
-                //Mapping muna :)
-                response.map((item, i) => {
-
-                    //Fetch kada sched_today
-                    let individual_clinicID = item.id
-                    promises.push(
-                        fetch(URL + 'api/v1/clinics/' + individual_clinicID + '/appointments/today', {
-                            method: 'GET',
-                            headers: {
-                                Accept: 'application/json',
-                                'Content-Type': 'application/json',
-                                Authorization: 'Bearer ' + token
-                            }
-                        })
-                            .then((response) => response.json())
-                            .then((json) => {
-
-                                if (json.length > 0) {
-
-                                    const people_waiting = json
-                                    var total = 0;
-
-                                    for (var i = 0; i < people_waiting.length; i++) {
-                                        total = total + people_waiting[i].people_waiting;
-                                    }
-                                    Appointment.push(
-                                        {
-                                            branch_external_id: json[0].branch_external_id,
-                                            people_waiting: total,
-                                        }
-                                    )
-                                }
-
-                            })
-
-                    )
-
-                    //Pushing na didi 
-                    MappedClinicData.push({
-                        clinic_id: item.id,
-                        clinic_name: item.name,
-                        clinic_address: item.address.full_address,
-                    });
-
-
-                })
-
-
-
+        fetch(URL + 'api/v1/clinics', {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
             }
+        })
+            .then((response) => response.json())
+            .then((json) => {
+
+                let MappedClinicData = []
+                let response = json.data;
+                let promises = [];
+                let Appointment = [];
+                if (response.length > 0) {
 
 
-            Promise.all(promises).then(() => {
+                    //Mapping muna :)
+                    response.map((item, i) => {
 
-                console.log(JSON.stringify(Appointment))
+                        //Fetch kada sched_today
+                        let individual_clinicID = item.id
+                        promises.push(
+                            fetch(URL + 'api/v1/clinics/' + individual_clinicID + '/appointments/today', {
+                                method: 'GET',
+                                headers: {
+                                    Accept: 'application/json',
+                                    'Content-Type': 'application/json',
+                                    Authorization: 'Bearer ' + token
+                                }
+                            })
+                                .then((response) => response.json())
+                                .then((json) => {
 
-                setClinicList(MappedClinicData)
-                setappointmentToday(Appointment)
+                                    if (json.length > 0) {
+
+                                        const people_waiting = json
+                                        var total = 0;
+
+                                        for (var i = 0; i < people_waiting.length; i++) {
+                                            total = total + people_waiting[i].people_waiting;
+                                        }
+                                        Appointment.push(
+                                            {
+                                                branch_external_id: json[0].branch_external_id,
+                                                people_waiting: total,
+                                            }
+                                        )
+                                    }
+
+                                })
+
+                        )
+
+                        //Pushing na didi 
+                        MappedClinicData.push({
+                            clinic_id: item.id,
+                            clinic_name: item.name,
+                            clinic_address: item.address.full_address,
+                        });
 
 
+                    })
+
+
+
+                }
+
+
+                Promise.all(promises).then(() => {
+
+                    console.log(JSON.stringify(Appointment))
+
+                    setClinicList(MappedClinicData)
+                    setappointmentToday(Appointment)
+
+                    setLoading(false)
+
+
+
+                });
+
+            })
+            .catch((error) => {
+
+                console.log(error);
 
             });
-
-        })
-        .catch((error) => {
-
-            console.log(error);
-
-        });
-  }
+    }
 
 
     const display = () => {
         console.log(JSON.stringify(appointmentToday))
+    }
+
+
+    const logout = () => {
+        Alert.alert(
+            "Log Out?",
+            "Are you sure you want to log out?",
+            [
+              {
+                text: "No",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              { text: "Yes", onPress: () => LogoutMe() }
+            ]
+          );
     }
 
 
@@ -232,13 +251,21 @@ const HomeScreen = ({ navigation }) => {
                         <Image source={LogoQoreMed} style={{ height: 40, width: 160 }}></Image>
                     </View>
 
-                    <TouchableOpacity onPress={() => display()}>
+                <View style={{flexDirection: 'row',}}>
+                <TouchableOpacity onPress={() => display()}>
                         <EvilIcons name="bell" size={25} />
                     </TouchableOpacity>
+                    <TouchableOpacity
+                    style={{marginHorizontal:5}}
+                     onPress={() => logout()}>
+                        <Ant name="logout" size={20} />
+                    </TouchableOpacity>
+                </View>
                 </View>
             </SafeAreaView>
             <View style={styles.container}>
                 <ScrollView
+                    contentContainerStyle={{paddingBottom:40}}
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
@@ -266,48 +293,78 @@ const HomeScreen = ({ navigation }) => {
                             <Text style={{ fontFamily: 'NunitoSans-Light', color: '#999', fontSize: 18 }}>Todays Appointment</Text>
                         </View>
 
+                        {isLoading === true ? <View>
+                            <ActivityIndicator size="large" color="#008FFB" />
+                        </View> : null}
 
-                        <View>
-                            {clinicList.map((item, i) => {
-                                const ClinicID = item.clinic_id
-                                return (
-                                    <>
-                                        <TouchableOpacity
-                                            key={i}
-                                            onPress={() => navigation.navigate('AppointmentPerClinic', {
-                                                clinic_id: ClinicID,
-                                                clinic_name: item.clinic_name
-                                            })}
-                                            style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', marginTop: 10, justifyContent: 'center' }}>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                                                    <Image source={Hospital} style={{ width: 45, height: 45, }}></Image>
-                                                    <View style={{ marginLeft: 5, flex: 1, paddingRight: 20 }}>
-                                                        <Text numberOfLines={1} style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>{item.clinic_name}</Text>
-                                                        <Text numberOfLines={2} style={{ fontSize: 14, fontFamily: 'NunitoSans-Light', color: '#999', }}>{item.clinic_address}</Text>
-                                                    </View>
-                                                </View>
+                        {clinicList.length < 1  ? (
+                            <View style={{ marginTop:15}}>
+                                {isLoading === true ? null : <Text>Setup your clinic here</Text>}
+                            </View>
+                        ) : (
 
-                                                {appointmentToday.filter(item => item.branch_external_id.includes(ClinicID)).map((item, i) => {
-                                                    return (
-                                                        <View key={i} style={{ backgroundColor: 'rgba(0,143,251,0.2)', borderRadius: 5 }}>
-                                                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, padding: 5, borderRadius: 5, }}> {item.people_waiting} </Text>
+                            <View>
+                                {clinicList.map((item, i) => {
+                                   
+                                    const ClinicID = item.clinic_id
+                                   
+                                    const filteredData = appointmentToday.filter((item) => {
+                                      return item.branch_external_id.includes(ClinicID)
+                                    })
 
-                                                        </View>
+                                    const people_waiting = filteredData.map((item, i) => {
+                                        return item.people_waiting
+                                    })
 
-                                                    )
+                                    const Waiting = people_waiting.toString();
+
+                                    
+
+                                    return (
+                                          <TouchableOpacity
+                                                key={i}
+                                                onPress={() => Waiting < 1 ? null : navigation.navigate('AppointmentPerClinic', {
+                                                    clinic_id: ClinicID,
+                                                    clinic_name: item.clinic_name
                                                 })}
+                                                style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', marginTop: 10, justifyContent: 'center' }}>
+                                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                                                        <Image source={Hospital} style={{ width: 45, height: 45, }}></Image>
+                                                        <View style={{ marginLeft: 5, flex: 1, paddingRight: 20 }}>
+                                                            <Text numberOfLines={1} style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>{item.clinic_name}</Text>
+                                                            <Text numberOfLines={2} style={{ fontSize: 14, fontFamily: 'NunitoSans-Light', color: '#999', }}>{item.clinic_address}</Text>
+                                                           
+                                                         </View>
+                                                    </View>
+
+                                                    {appointmentToday.filter(item => item.branch_external_id.includes(ClinicID)).map((item, i) => {
+                                                        return (
+                                                            <View key={i} style={{ backgroundColor: 'rgba(0,143,251,0.2)', borderRadius: 5 }}>
+                                                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, padding: 5, borderRadius: 5, }}> {item.people_waiting} </Text>
+
+                                                            </View>
+
+                                                        )
+                                                    })}
 
 
-                                            </View>
-                                        </TouchableOpacity>
-                                    </>
-                                )
-                            })}
+                                                </View>
+                                            </TouchableOpacity>
+                                        
+                                    )
+                                })}
 
 
 
-                        </View>
+                            </View>
+
+
+
+
+
+                        )}
+
 
 
 
@@ -348,6 +405,7 @@ const HomeScreen = ({ navigation }) => {
                         <ScrollView
                             horizontal
                             showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={{paddingRight:20}}
                         >
                             <View style={{ marginLeft: 8, justifyContent: 'center', }}>
 
@@ -431,7 +489,7 @@ export default HomeScreen
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginBottom: 60
-        // backgroundColor: 'white'
+        
+        backgroundColor: 'white'
     }
 })
