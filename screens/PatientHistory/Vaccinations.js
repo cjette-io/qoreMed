@@ -33,6 +33,7 @@ const Vaccinations = ({ navigation, route }) => {
     const [VaccinationHistoryData, setVaccinationHistoryData] = useState([])
 
     useEffect(async() =>{
+        const unsubscribe = navigation.addListener('focus', async() => {
         let token;
         token = await AsyncStorage.getItem('userToken');
        
@@ -57,8 +58,10 @@ const Vaccinations = ({ navigation, route }) => {
                 console.log(error);
     
             });
+        });
+        return unsubscribe;
 
-    },[])
+    },[navigation])
 
 
 

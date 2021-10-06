@@ -25,8 +25,9 @@ const MedicalHistory = ({ navigation, route }) => {
 
     useEffect(async () => {
 
-        console.log(Patient_ID)
-        let token;
+        const unsubscribe = navigation.addListener('focus', async() => {
+        
+            let token;
         token = await AsyncStorage.getItem('userToken');
 
         fetch(URL + "api/v1/patients/" + Patient_ID + "/history/medical-history", {
@@ -51,11 +52,17 @@ const MedicalHistory = ({ navigation, route }) => {
                 console.log(error);
 
             });
+        });
 
-    }, [])
+        
+        return unsubscribe;
+
+     
+
+    }, [navigation])
 
     const userTap = () => {
-        // navigation.navigate('MedicationAddScreen',Patient_ID)
+        navigation.navigate('MedicalHistoryAddScreen',Patient_ID)
     }
   
 

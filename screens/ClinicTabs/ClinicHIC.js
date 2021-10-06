@@ -90,25 +90,31 @@ const ClinicHIC = ({ id }) => {
             <ScrollView>
 
                 <View style={{ marginVertical: 10 }}>
+                <Text style={{fontWeight: 'bold', fontSize:14}}>Name</Text>
                     <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="HIC Name" value={hci_name} onChangeText={(text) => sethci_name(text)} ></TextInput>
                 </View>
                 <View>
+                <Text style={{fontWeight: 'bold', fontSize:14}}>Address Line 1</Text>
                     <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Address Line 1" value={address_1} onChangeText={(text) => setaddress_1(text)} ></TextInput>
                 </View>
 
                 <View style={{ marginVertical: 10 }}>
+                <Text style={{fontWeight: 'bold', fontSize:14}}>Address Line 2</Text>
                     <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Address Line 2" value={address_2} onChangeText={(text) => setaddress_2(text)} ></TextInput>
                 </View>
 
                 <View>
+                <Text style={{fontWeight: 'bold', fontSize:14}}>City</Text>
                     <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="City" value={city} onChangeText={(text) => setcity(text)} ></TextInput>
                 </View>
 
                 <View style={{ marginVertical: 10 }}>
+                <Text style={{fontWeight: 'bold', fontSize:14}}>Province</Text>
                     <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Province" value={province} onChangeText={(text) => setprovince(text)} ></TextInput>
                 </View>
 
                 <View style={{ marginVertical: 10 }}>
+                <Text style={{fontWeight: 'bold', fontSize:14}}>Accreditation No.</Text>
                     <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Accreditation" value={accreditation} onChangeText={(text) => setaccreditation(text)} ></TextInput>
                 </View>
 

@@ -259,7 +259,7 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                 'Content-Type': 'application/json',
                 Authorization: 'Bearer ' + token
             }, body: JSON.stringify({
-                queue_id: id
+                code: id
             })
         })
             .then((response) => response.json())
@@ -522,7 +522,7 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                                                             <Image source={Avatar} style={{ width: 40, height: 40 }}></Image>
                                                         </View>
 
-                                                        <TouchableOpacity onPress={() => navigation.navigate('PatientProfile', item.reference_external_id)} style={{ flex: 1 }}>
+                                                        <TouchableOpacity onPress={() => item.reference_external_id == null ? null : navigation.navigate('PatientProfile', item.reference_external_id)} style={{ flex: 1 }}>
                                                             <View style={{ flex: 1, flexDirection: 'row' }}>
                                                                 <Text style={{ fontWeight: 'bold', fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>{item.name}</Text>
                                                                 <Text style={{ color: 'red', fontSize: 12, left: 5 }}>{item.reference_external_id == null ? 'New' : ''}</Text>
@@ -587,7 +587,7 @@ const AppointmentPerClinic = ({ route, navigation }) => {
                                                                                         <Menu.Item onPress={() => create_patient_record(item.id)} title="Create Patient Record" />
                                                                                     ) : (null)}
                                                                                    
-                                                                                    <Menu.Item onPress={() => serve(item.id)} title="Skip" />
+                                                                                    <Menu.Item onPress={() => serve(item.id)} title="Serve" />
                                                                                     <Menu.Item onPress={() => CancelQ(item.id)} title="Cancel" />
                                                                                 </>
                                                                             )

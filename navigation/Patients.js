@@ -25,10 +25,19 @@ import {
   SubstanceAddScreen,
 
   SexualHistory,
+  SexualHistoryAdd,
+
   MedicalHistory,
+  MedicalHistoryAddScreen,
+  
   FamilyHistory,
+  FamilyAddHistory,
+  
   VitalsList,
-  VitalAddScreen
+  VitalAddScreen,
+
+
+  Encounters
 
 } from '../screens'
 
@@ -66,10 +75,24 @@ const PatientsContentScreen = () => (
     <Patients.Screen name="SubstanceAddScreen" component={SubstanceAddScreen} />
 
     <Patients.Screen name="SexualHistory" component={SexualHistory} />
+    <Patients.Screen name="SexualHistoryAdd" component={SexualHistoryAdd} />
+
+
     <Patients.Screen name="MedicalHistory" component={MedicalHistory} />
+    <Patients.Screen name="MedicalHistoryAddScreen" component={MedicalHistoryAddScreen} />
+
+    
+
     <Patients.Screen name="FamilyHistory" component={FamilyHistory} />
+    <Patients.Screen name="FamilyAddHistory" component={FamilyAddHistory} />
+
+    
+
+
     <Patients.Screen name="VitalsList" component={VitalsList} />
     <Patients.Screen name="VitalAddScreen" component={VitalAddScreen} />
+    
+    <Patients.Screen name="Encounters" component={Encounters} />
     
     
     

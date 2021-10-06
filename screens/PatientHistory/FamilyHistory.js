@@ -21,7 +21,8 @@ const FamilyHistory = ({navigation, route}) => {
     const [FamilyHistoryData, setFamilyHistoryData] = useState([])
 
     useEffect(async() => {
-        let token;
+        const unsubscribe = navigation.addListener('focus', async() => {
+            let token;
         token = await AsyncStorage.getItem('userToken');
         
         fetch(URL + "api/v1/patients/"+Patient_ID+"/history/family-history", {
@@ -46,11 +47,17 @@ const FamilyHistory = ({navigation, route}) => {
                 console.log(error);
     
             });
-    
-      },[])
+        });
+
+        
+        return unsubscribe;
+
+     
+
+    }, [navigation])
     
       const userTap = () => {
-        //   navigation.navigate('MedicationAddScreen',Patient_ID)
+        navigation.navigate('FamilyAddHistory',Patient_ID)
       }
     
     

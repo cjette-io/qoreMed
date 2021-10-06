@@ -38,6 +38,11 @@ const MedicationAddScreen = ({ navigation, route }) => {
         name: ''
     })
 
+    const [medicineForm2, setmedicineForm2] = useState({
+        id: '',
+        name: ''
+    })
+
     const [Qty, setQty] = useState('')
 
     const [fromDate, setFromDate] = useState('')
@@ -45,10 +50,16 @@ const MedicationAddScreen = ({ navigation, route }) => {
 
 
     const [formMedication, setformMedication] = useState([])
+    const [medFreq, setmedFreq] = useState([])
 
     const [visible, setVisible] = React.useState(false);
+    const [visible2, setVisible2] = React.useState(false);
+
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
+
+    const showModal2 = () => setVisible2(true);
+    const hideModal2 = () => setVisible2(false);
 
     const showFromDatePicker = () => {
         setFromDatePickerVisibility(true);
@@ -97,6 +108,15 @@ const MedicationAddScreen = ({ navigation, route }) => {
 
     }
 
+    const handleToConfirmForm2 = (id, name) => {
+        setmedicineForm2({
+            id: id,
+            name: name
+        })
+        hideModal2()
+
+    }
+
 
     useEffect(async () => {
         let token;
@@ -124,6 +144,28 @@ const MedicationAddScreen = ({ navigation, route }) => {
                 console.log(error);
 
             });
+
+            fetch(URL + 'api/v1/references/medication-frequencies', {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token
+                }
+            })
+                .then((response) => response.json())
+                .then((json) => {
+    
+                    setmedFreq(json)
+                   // console.log('medication-frequencies: ' + JSON.stringify(json))
+                   
+    
+                })
+                .catch((error) => {
+    
+                    console.log(error);
+    
+                });
 
     }, [])
 
@@ -153,7 +195,7 @@ const MedicationAddScreen = ({ navigation, route }) => {
                     dose: dose,
                     medication_form_id: medicineForm.id,
                     quantity: Qty,
-                    medication_frequency_id: 1,
+                    medication_frequency_id: medicineForm2.id,
                     duration_from: fromDate,
                     duration_to: toDate,
                     note: note
@@ -263,9 +305,11 @@ const MedicationAddScreen = ({ navigation, route }) => {
 
                 <View>
                     <Text style={{fontWeight: 'bold', fontSize:16}}>Frequency</Text>
-                    <TextInput
-                        style={styles.inputs}
-                        placeholder="Select sig frequency"></TextInput>
+                    <TouchableWithoutFeedback onPress={() => showModal2()} style={{ marginTop: 5, }}>
+                        <View>
+                            <Text style={[styles.inputs, { color: '#999', }]}>{medicineForm2.name == '' ? 'Select Medication Frequency' : medicineForm2.name}</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </View>
 
                 <View>
@@ -339,6 +383,32 @@ const MedicationAddScreen = ({ navigation, route }) => {
                                     <>
                                         <TouchableOpacity key={index}
                                             onPress={() => handleToConfirmForm(item.id, item.name,)}
+                                            style={{ borderLeftWidth: 4, borderColor: '#4CD7D0', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', marginBottom: 10 }}
+                                        >
+                                            <Text>{item.name}</Text>
+                                        </TouchableOpacity>
+                                    </>
+                                )
+                            })}
+                        </View>
+                    </ScrollView>
+                </Modal>
+
+                <Modal visible={visible2} onDismiss={hideModal2} contentContainerStyle={containerStyle}>
+                    <ScrollView
+                        vertical
+                        showsVerticalScrollIndicator={false}
+                        style={{ height: 500 }}>
+                        <View>
+                            <Text style={{ textAlign: 'center', fontSize: 18, fontWeight: 'bold', fontFamily: 'OpenSans-Regular' }}>SELECT MEDICINE FREQUENCY</Text>
+                        </View>
+
+                        <View style={{ marginTop: 10, }}>
+                            {medFreq.map((item, index) => {
+                                return (
+                                    <>
+                                        <TouchableOpacity key={index}
+                                            onPress={() => handleToConfirmForm2(item.id, item.name,)}
                                             style={{ borderLeftWidth: 4, borderColor: '#4CD7D0', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', marginBottom: 10 }}
                                         >
                                             <Text>{item.name}</Text>

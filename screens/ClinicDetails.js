@@ -36,7 +36,7 @@ const ClinicDetails = ({route, navigation}) => {
     const [clinicName, setclinicName] = useState('')
     const [clinicAddress, setclinicAddress] = useState('')
     const [loading, setLoading] = React.useState(true);
-
+    const [token, setToken] = useState('')
     const [
         currentLongitude,
         setCurrentLongitude
@@ -55,7 +55,7 @@ const ClinicDetails = ({route, navigation}) => {
         const unsubscribe = navigation.addListener('focus', async() => {
             let token;
             token = await AsyncStorage.getItem('userToken');
-           
+              setToken(token)
          const address = data.address.full_address == null ? 'Manila bay' : data.address.full_address
 
             // setToken(token)
@@ -294,7 +294,7 @@ const Load =  async() => {
         {
            data:item,
            id : data.id,
-           token: usertoken,
+           token: token,
         })
     }
 
@@ -313,7 +313,7 @@ const Load =  async() => {
                         extrapolate: 'clamp',
                     });
                     return (
-                        <TouchableOpacity onPress={() => DeleteSched(item.id)} activeOpacity={0.6}>
+                        <TouchableOpacity key={index} onPress={() => DeleteSched(item.id)} activeOpacity={0.6}>
                             <View style={styles.deleteBox}>
                                 <Entypo name="trash" size={20} color="white"/>
                                 <Animated.Text style={{color:'white', fontWeight:'bold'}}>
@@ -452,7 +452,7 @@ const Load =  async() => {
                                     <Text style={{ fontWeight: '700' }}>Schedule</Text>
                                     <TouchableOpacity onPress={() => navigation.navigate('ClinicAddSchedule',{
                                         id : data.id,
-                                        token: usertoken,
+                                        token: token,
                                     })}>
                                         <Text>+ New Schedule</Text>
                                     </TouchableOpacity>

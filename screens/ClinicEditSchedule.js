@@ -6,152 +6,46 @@ import moment from 'moment';
 
 
 import IconION from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/Feather';
-import IconAnt from 'react-native-vector-icons/AntDesign';
-import IconMCI from 'react-native-vector-icons/MaterialIcons';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import URL from '../api'
 const ClinicEditSchedule = ({ route, navigation }) => {
     const { id, token, data } = route.params
 
-    useEffect(async () => {
-        console.log(data)
-    }, [])
+    const [schedtypeLabel, setschedtypeLabel] = useState('')
+    const [selectedSCType, setselectedSCType] = useState('')
+    const [scValue, setscValue] = useState(0)
 
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
-    const [isTimeStartPickerVisible, setisTimeStartPickerVisible] = useState(false);
-    const [isTimeEndPickerVisible, setisTimeEndPickerVisible] = useState(false);
+    const [checkedCType, setCheckedCType] = React.useState(null);
+    const [selectedCType, setselectedCType] = React.useState(null);
 
-    const [serving_time, setserving_time] = useState('')
-    const [capacity, setCapacity] = useState('')
-    const [insertDate, setInsertDate] = useState('')
-    const [insertEndDate, setEndInsertDate] = useState('')
+
+    const ConsultationType = [
+        {
+            con_id: 0,
+            con_name: 'On-Site Consultation'
+        },
+        {
+            con_id: 1,
+            con_name: 'Virtual Consultation'
+        }
+    ]
     const [startTime, setStartTime] = useState('')
     const [endTime, setEndTime] = useState('')
 
-    const showDatePicker = () => {
-        setDatePickerVisibility(true);
-    };
-    const showEndDatePicker = () => {
-        setEndDatePickerVisibility(true);
-    };
-
+    const [isTimeStartPickerVisible, setisTimeStartPickerVisible] = useState(false);
+    const [isTimeEndPickerVisible, setisTimeEndPickerVisible] = useState(false);
     const showStartTimePicker = () => {
         setisTimeStartPickerVisible(true)
     }
     const showEndTimePicker = () => {
         setisTimeEndPickerVisible(true)
     }
-
-    const hideDatePicker = () => {
-        setDatePickerVisibility(false);
-    };
-    const hideEndDatePicker = () => {
-        setEndDatePickerVisibility(false);
-    };
-
     const hideTimeStartPicker = () => {
         setisTimeStartPickerVisible(false);
     };
     const hideTimeEndPicker = () => {
         setisTimeEndPickerVisible(false);
     };
-
-    useEffect(() => {
-        if (data.type == "fcfs") {
-            setselectedSCType(data.type)
-            setCheckedSCType(1)
-            setserving_time(data.serving_time)
-        } else if (data.type == "slotted") {
-            setselectedSCType(data.type)
-            setCheckedSCType(0)
-            setserving_time(data.serving_time)
-        } else if (data.type == "by-capacity") {
-            setCheckedSCType(2)
-            setselectedSCType(data.type)
-            setCapacity(data.capacity)
-        }
-
-
-        if (data.is_virtual == true) {
-            setCheckedCType(1)
-            setselectedCType(0)
-        } else {
-            setCheckedCType(0)
-            setselectedCType(1)
-        }
-
-        setInsertDate(data.start_date)
-        setStartTime(data.start_time)
-        setEndTime(data.end_time)
-
-
-        if (data.frequency == "never") {
-            setCheckedfrequency(0)
-            setselectedfrequency(data.frequency)
-            setEndInsertDate('')
-        } else if (data.frequency == "every_week") {
-            setCheckedfrequency(1)
-            setselectedfrequency(data.frequency)
-            setEndInsertDate(data.end_date)
-        } else if (data.frequency == "every_weekdays") {
-            setCheckedfrequency(2)
-            setselectedfrequency(data.frequency)
-            setEndInsertDate(data.end_date)
-        }
-
-    }, [])
-
-
-    const handleInsertDateConfirm = (data) => {
-
-        console.log(data)
-
-        var newyear = new Date(data).getFullYear();
-        var newDate = new Date(data).getDate();
-        var newMonth = new Date(data).getMonth() + 1;
-
-        const DataDate = newyear + '-' + newMonth + '-' + newDate;
-        console.log(DataDate);
-        setInsertDate(DataDate)
-        setDatePickerVisibility(false);
-        // var hours = new Date(data).getHours(); //Current Hours
-        // var min = new Date(data).getMinutes(); //Current Minutes
-        // var sec = new Date(data).getSeconds(); //Current Seconds
-
-
-        // const setTime = moment(data).format('LT');
-
-        // console.log(setTime)
-
-    }
-
-
-    const handleInsertEndDateConfirm = (data) => {
-
-        console.log(data)
-
-        var newyear = new Date(data).getFullYear();
-        var newDate = new Date(data).getDate();
-        var newMonth = new Date(data).getMonth() + 1;
-
-        const DataDate = newyear + '-' + newMonth + '-' + newDate;
-        console.log(DataDate);
-        setEndInsertDate(DataDate)
-        setEndDatePickerVisibility(false);
-        // var hours = new Date(data).getHours(); //Current Hours
-        // var min = new Date(data).getMinutes(); //Current Minutes
-        // var sec = new Date(data).getSeconds(); //Current Seconds
-
-
-        // const setTime = moment(data).format('LT');
-
-        // console.log(setTime)
-
-    }
 
     const handleInsertTimeStartConfirm = (data) => {
         var hours = new Date(data).getHours(); //Current Hours
@@ -174,104 +68,51 @@ const ClinicEditSchedule = ({ route, navigation }) => {
         setEndTime(setTime)
         setisTimeEndPickerVisible(false);
     }
+    useEffect(() => {
 
-    const [checkedSCType, setCheckedSCType] = React.useState(null);
-    const [selectedSCType, setselectedSCType] = React.useState('');
+        console.log(data)
 
-
-    const ScheduleType = [
-        {
-            sched_id: 'slotted',
-            sched_name: 'Slotted'
-        },
-        {
-            sched_id: 'fcfs',
-            sched_name: 'First Come, First Served'
-        },
-        {
-            sched_id: 'by-capacity',
-            sched_name: 'By Capacity'
-        },
-    ]
-    const [checkedCType, setCheckedCType] = React.useState(null);
-    const [selectedCType, setselectedCType] = React.useState('');
-
-    const ConsultationType = [
-        {
-            con_id: '1',
-            con_name: 'On-Site Consultation'
-        },
-        {
-            con_id: '0',
-            con_name: 'Virtual Consultation'
+        if (data.type == "fcfs") {
+            setschedtypeLabel('Serving Time')
+            setselectedSCType(data.type)
+            // setselectedSCType(data.type)
+            // setCheckedSCType(1)
+            setscValue(data.serving_time.toString())
+        } else if (data.type == "slotted") {
+            setschedtypeLabel('Serving Time')
+            setselectedSCType(data.type)
+            // setCheckedSCType(0)
+            setscValue(data.serving_time.toString())
+        } else if (data.type == "by-capacity") {
+            setschedtypeLabel('Capacity')
+            setselectedSCType(data.type)
+            setscValue(data.capacity.toString())
         }
-    ]
-
-    const [checkedfrequency, setCheckedfrequency] = React.useState(null);
-    const [selectedfrequency, setselectedfrequency] = React.useState('');
-
-    const frequencyType = [
-        {
-            freq_id: 'never',
-            freq_name: 'Never'
-        },
-        {
-            freq_id: 'every_week',
-            freq_name: 'Every Week'
-        },
-        {
-            freq_id: ' every_weekdays',
-            freq_name: 'Every Weekdays'
-        }
-    ]
 
 
-
-    const rbSCType = (i, id) => {
-        setCheckedSCType(i)
-        setselectedSCType(id)
-
-        if (id == 'by-capacity') {
-            setserving_time('')
+        if (data.is_virtual == true) {
+            setCheckedCType(1)
+            setselectedCType(0)
         } else {
-            setCapacity('')
+            setCheckedCType(0)
+            setselectedCType(1)
         }
 
-    }
+
+        setStartTime(data.start_time)
+        setEndTime(data.end_time)
+
+
+    }, [])
+
     const rbCType = (i, id) => {
         setCheckedCType(i)
         setselectedCType(id)
 
     }
 
-    const rbfreq = (i, id) => {
-        setCheckedfrequency(i)
-        setselectedfrequency(id)
-
-        if (id === 'never') {
-            setEndInsertDate('')
-        }
-
-    }
-
-
-    const EditSchedule = async () => {
-
-            // console.log(id)
-
-            // console.log(selectedSCType)
-            // console.log(selectedCType)
-            // console.log(startTime)
-            // console.log(endTime)
-            // console.log(selectedfrequency)
-            // console.log(insertDate)
-            // console.log(insertEndDate)
-            // console.log(serving_time)
-            // console.log(capacity)
-
-
-
-       
+    const EditSchedule = () => {
+         
         fetch(URL + 'api/v1/schedules/'+ data.id, {
             method: 'PATCH',
             headers: {
@@ -280,37 +121,27 @@ const ClinicEditSchedule = ({ route, navigation }) => {
                 Authorization: 'Bearer ' + token 
             }, body: JSON.stringify({
 
-                type: selectedSCType,
+              
                 is_virtual: selectedCType,
                 start_time: startTime,
                 end_time: endTime,
-                frequency: selectedfrequency,
-                start_date: insertDate,
-                end_date: insertEndDate,
-                serving_time:serving_time,
-                capacity:capacity == '' ? null : capacity,
-
-                    //  type: "slotted",
-                    // is_virtual : 0,
-                    // start_time: "13:00",
-                    // end_time:"14:00",
-                    // frequency:"every_week",
-                    // start_date:"2021/7/28",
-                    // end_date : "2021/8/28",
-                    // serving_time : 30
+              
+                serving_time:selectedSCType == 'by-capacity' ? null : scValue,
+                capacity:selectedSCType == 'by-capacity' ? scValue : null,
 
             })
         })
             .then((response) => response.json())
             .then((json) => {
 
-                console.log(json)
+                console.log(json.message)
 
 
                 if (json.message == 'The given data was invalid.')
                 {
 
                 }else{
+                    alert(JSON.stringify(json.message))
                     navigation.navigate('ClinicDetails')
                 }
 
@@ -322,8 +153,6 @@ const ClinicEditSchedule = ({ route, navigation }) => {
 
             });
     }
-
-
 
     return (
         <>
@@ -351,54 +180,16 @@ const ClinicEditSchedule = ({ route, navigation }) => {
                 </View>
             </SafeAreaView>
 
-            <ScrollView
-                vertical
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 100 }}
-                style={{ flex: 1, height: '100%', padding: 10 }}>
+            <View style={{ flex: 1, padding: 10 }}>
                 <View>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Schedule Type:</Text>
+                    <Text>{schedtypeLabel}</Text>
+                    <TextInput
 
-                    {ScheduleType.map((item, i) => {
-                        return (
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <RadioButton
-
-
-                                    status={checkedSCType === i ? 'checked' : 'unchecked'}
-                                    onPress={() => rbSCType(i, item.sched_id)}
-                                />
-                                <Text style={{ fontSize: 16 }}>{item.sched_name}</Text>
-                            </View>
-                        )
-                    })}
-
-
-
-                </View>
-
-                <View style={{ marginTop: 20 }}>
-
-                    {selectedSCType === "by-capacity" ? (
-                        <View>
-                            <TextInput
-                                value={capacity.toString()}
-                                onChangeText={(text) => setCapacity(text)}
-                                keyboardType="numeric" style={{ borderBottomWidth: 1 }} placeholder="Insert total patient"></TextInput>
-                        </View>
-
-                    ) : (
-                        <View>
-                            <TextInput
-                                value={serving_time.toString()}
-                                onChangeText={(text) => setserving_time(text)}
-                                keyboardType="numeric" style={{ borderBottomWidth: 1 }} placeholder="Insert serving time per patient in minutes"></TextInput>
-                        </View>
-
-                    )}
-
-
-
+                        onChangeText={(text) => setscValue(text)}
+                        placeholder="Insert procedure done"
+                        style={{ top: 5, borderWidth: 0.5, padding: 10, borderRadius: 10, borderColor: 'gray' }}
+                        value={scValue}
+                    />
                 </View>
 
                 <View style={{ marginTop: 20 }}>
@@ -407,11 +198,13 @@ const ClinicEditSchedule = ({ route, navigation }) => {
 
                     {ConsultationType.map((item, i) => {
                         return (
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View
+                                key={i}
+                                style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <RadioButton
 
 
-                                    status={checkedCType === i ? 'checked' : 'unchecked'}
+                                    status={checkedCType === item.con_id ? 'checked' : 'unchecked'}
                                     onPress={() => rbCType(i, item.con_id)}
                                 />
                                 <Text style={{ fontSize: 16 }}>{item.con_name}</Text>
@@ -422,96 +215,39 @@ const ClinicEditSchedule = ({ route, navigation }) => {
                 </View>
 
                 <View style={{ marginTop: 20 }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Insert start date</Text>
-                    <TouchableOpacity onPress={() => showDatePicker()}>
-                        <View>
-                            <Text style={[styles.inputs, { color: '#999', }]}>{!insertDate ? 'mm/dd/yyyy' : insertDate}</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-
-
-                <View style={{ marginTop: 20 }}>
                     <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Time:</Text>
-                    <TouchableOpacity onPress={() => showStartTimePicker()}>
+                    <Text>Insert start time</Text>
+                    <TouchableOpacity
+                        style={{ marginVertical: 10 }}
+                        onPress={() => showStartTimePicker()}>
                         <View>
                             <Text style={[styles.inputs, { color: '#999', }]}>{!startTime ? 'Insert start time' : startTime}</Text>
                         </View>
                     </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => showEndTimePicker()}>
+                    <Text>Insert start time</Text>
+                    <TouchableOpacity
+                    style={{ marginVertical: 10 }}
+                     onPress={() => showEndTimePicker()}>
                         <View>
                             <Text style={[styles.inputs, { color: '#999', }]}>{!endTime ? 'Insert start time' : endTime}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-
-                <View style={{ marginTop: 20 }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Repeat</Text>
-
-                    {frequencyType.map((item, i) => {
-                        return (
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <RadioButton
+            </View>
 
 
-                                    status={checkedfrequency === i ? 'checked' : 'unchecked'}
-                                    onPress={() => rbfreq(i, item.freq_id)}
-                                />
-                                <Text style={{ fontSize: 16 }}>{item.freq_name}</Text>
-                            </View>
-                        )
-                    })}
-
-
-                </View>
-
-                {/* if selected si every week nan Weekdays */}
-
-                <View style={{ marginTop: 20 }}>
-                    {checkedfrequency > 0 ? (
-                        <>
-                            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Insert end date</Text>
-                            <TouchableOpacity onPress={() => showEndDatePicker()}>
-                                <View>
-                                    <Text style={[styles.inputs, { color: '#999', }]}>{!insertEndDate ? 'mm/dd/yyyy' : insertEndDate}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </>
-                    ) : null}
-
-                </View>
-
-                <DateTimePickerModal
-                    isVisible={isDatePickerVisible}
-                    mode="date"
-                    onConfirm={handleInsertDateConfirm}
-                    onCancel={hideDatePicker}
-                />
-                <DateTimePickerModal
-                    isVisible={isEndDatePickerVisible}
-                    mode="date"
-                    onConfirm={handleInsertEndDateConfirm}
-                    onCancel={hideEndDatePicker}
-                />
-
-                <DateTimePickerModal
-                    isVisible={isTimeStartPickerVisible}
-                    mode="time"
-                    onConfirm={handleInsertTimeStartConfirm}
-                    onCancel={hideTimeStartPicker}
-                />
-                <DateTimePickerModal
-                    isVisible={isTimeEndPickerVisible}
-                    mode="time"
-                    onConfirm={handleInsertTimeEndConfirm}
-                    onCancel={hideTimeEndPicker}
-                />
-
-
-
-
-            </ScrollView>
+            <DateTimePickerModal
+                isVisible={isTimeStartPickerVisible}
+                mode="time"
+                onConfirm={handleInsertTimeStartConfirm}
+                onCancel={hideTimeStartPicker}
+            />
+            <DateTimePickerModal
+                isVisible={isTimeEndPickerVisible}
+                mode="time"
+                onConfirm={handleInsertTimeEndConfirm}
+                onCancel={hideTimeEndPicker}
+            />
         </>
     )
 }
@@ -520,9 +256,8 @@ export default ClinicEditSchedule
 
 const styles = StyleSheet.create({
     inputs: {
-        borderBottomWidth: 0.5,
-        padding: 10,
-        borderColor: '#3C1053'
 
+
+        borderWidth: 0.5, padding: 10, borderRadius: 10, borderColor: 'gray'
     }
 })

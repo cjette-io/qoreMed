@@ -162,18 +162,22 @@ const ClinicInformation = ({id}) => {
 
             <View style={{flex:1 ,marginVertical:10}}>
                      <View>
+                     <Text style={{fontWeight: 'bold', fontSize:14}}>Name:*</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Clinic's name" value={name} onChangeText={(text) => setName(text)} ></TextInput>
                     </View>
 
                     <View style={{marginVertical:10}}>
+                    <Text style={{fontWeight: 'bold', fontSize:14}}>Description</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Description" value={description} onChangeText={(text) => setDescription(text)} ></TextInput>
                     </View>
 
                     <View>
+                    <Text style={{fontWeight: 'bold', fontSize:14}}>Landmark</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Landmark" value={landmark} onChangeText={(text) => setlandmark(text)} ></TextInput>
                     </View>
 
                     <View style={{marginVertical:10}}>
+                    <Text style={{fontWeight: 'bold', fontSize:14}}>Consultation Fee</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Consultation Fee" value={fee} onChangeText={(text) => setFee(text)} ></TextInput>
                     </View>
 

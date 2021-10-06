@@ -9,7 +9,7 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-
+import FabSexual from './component/FabSexual'
 import moment from 'moment'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,7 +25,7 @@ const SexualHistory = ({ navigation, route }) => {
     const [contraceptiveItems, setcontraceptivesItems] = useState([])
 
     useEffect(async () => {
-
+        const unsubscribe = navigation.addListener('focus', async() => {
         console.log(Patient_ID)
         let token;
         token = await AsyncStorage.getItem('userToken');
@@ -42,7 +42,7 @@ const SexualHistory = ({ navigation, route }) => {
             .then((json) => {
 
 
-                //  console.log(JSON.stringify(json))
+                 console.log(JSON.stringify(json))
                 //   setSubstancesHistoryData(json)
                 setSexualData(json)
                 setcontraceptivesItems(json.contraceptive_items)
@@ -53,8 +53,15 @@ const SexualHistory = ({ navigation, route }) => {
                 console.log(error);
 
             });
+        });
+        return unsubscribe;
 
-    }, [])
+    }, [navigation])
+
+    const userTap = () => {
+        navigation.navigate('SexualHistoryAdd',Patient_ID)
+    }
+
 
 
     return (
@@ -142,6 +149,8 @@ const SexualHistory = ({ navigation, route }) => {
                 </View>
 
             </View>
+
+            <FabSexual tap={userTap} />
 
         </>
     )

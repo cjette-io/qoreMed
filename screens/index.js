@@ -24,6 +24,7 @@ import PatientProfile from "./PatientProfile";
 import HistoryList from "./HistoryList";
 import VitalsList from "./VitalsList";
 import VitalAddScreen from "./VitalAddScreen";
+import Encounters from "./Encounters";
 
 //Patient History Medication
 import { 
@@ -44,8 +45,13 @@ import {
 
 
     SexualHistory,
+    SexualHistoryAdd,
+    
     MedicalHistory,
-    FamilyHistory
+    MedicalHistoryAddScreen,
+    
+    FamilyHistory,
+    FamilyAddHistory
  } from "./PatientHistory";
 
 export {
@@ -75,10 +81,20 @@ export {
     SubstanceAddScreen,
     
     SexualHistory,
+    SexualHistoryAdd,
+
     MedicalHistory,
+    MedicalHistoryAddScreen,
+
     FamilyHistory,
+    FamilyAddHistory,
+
     VitalsList,
     VitalAddScreen,
+
+    Encounters,
+
+    
     ClinicList,
     ClinicAddNew,
     ClinicDetails,

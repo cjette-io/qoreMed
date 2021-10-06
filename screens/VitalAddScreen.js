@@ -62,7 +62,7 @@ const VitalAddScreen = ({ navigation, route }) => {
 
 
                 console.log(JSON.stringify(json))
-               
+
 
 
 
@@ -79,7 +79,7 @@ const VitalAddScreen = ({ navigation, route }) => {
 
 
     return (
-        <> 
+        <>
             <SafeAreaView
                 style={{ padding: 10, backgroundColor: 'white', elevation: 5 }}
             >
@@ -104,130 +104,130 @@ const VitalAddScreen = ({ navigation, route }) => {
             </SafeAreaView>
 
 
-            <ScrollView 
-            vertical
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{paddingBottom: 100 }}
+            <ScrollView
+                vertical
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 100 }}
 
-            style={{padding:20}}
+                style={{ padding: 20 }}
             >
-            <View>
-                <Text>Weight (kg)</Text>
-                <TextInput
-                value={vital1}
-                onChangeText={(text) => setvital1(text)}
-                //  placeholder="Weight in (kg)" 
-                keyboardType = 'numeric'
-                 style={{borderBottomWidth:1}}
-                  />
-            </View>
+                <View style={{ marginVertical: 10 }}>
+                    <Text style={{fontWeight: 'bold' }}>Weight (kg)</Text>
+                    <TextInput
+                        value={vital1}
+                        onChangeText={(text) => setvital1(text)}
+                        placeholder="Insert weight in kg"
+                        keyboardType='numeric'
+                        style={{ top: 5, borderWidth: 0.5, padding: 10, borderRadius: 10, borderColor: 'gray' }}
+                    />
+                </View>
 
-            <View>
-                <Text>Height (m)</Text>
-                <TextInput
-                value={vital2}
-                onChangeText={(text) => setvital2(text)}
-                //  placeholder="Weight in (kg)" 
-                keyboardType = 'numeric'
-                 style={{borderBottomWidth:1}}
-                  />
-            </View>
+                <View style={{ marginVertical: 10 }}>
+                    <Text style={{fontWeight: 'bold' }}>Height (m)</Text>
+                    <TextInput
+                        value={vital2}
+                        onChangeText={(text) => setvital2(text)}
+                        placeholder="Insert height in m" 
+                        keyboardType='numeric'
+                        style={{ top: 5, borderWidth: 0.5, padding: 10, borderRadius: 10, borderColor: 'gray' }}
+                      />
+                </View>
 
-            <View>
-                <Text>Body Mass Index (kg/m2)</Text>
-                <TextInput
-                value={vital3}
-                onChangeText={(text) => setvital3(text)}
-                //  placeholder="Weight in (kg)" 
-                keyboardType = 'numeric'
-                 style={{borderBottomWidth:1}}
-                  />
-                
-            </View>
+                <View style={{ marginVertical: 10 }}>
+                <Text style={{fontWeight: 'bold' }}>Body Mass Index (kg/m2)</Text>
+                    <TextInput
+                        value={vital3}
+                        onChangeText={(text) => setvital3(text)}
+                        placeholder="Insert body mass index in kg/m2" 
+                        keyboardType='numeric'
+                        style={{ top: 5, borderWidth: 0.5, padding: 10, borderRadius: 10, borderColor: 'gray' }}
+                              />
 
-            <View>
-                <Text>Blood Pressure (mmHg)</Text>
-                <TextInput
-                value={vital4}
-                onChangeText={(text) => setvital4(text)}
-                //  placeholder="Weight in (kg)" 
-                keyboardType = 'numeric'
-                 style={{borderBottomWidth:1}}
-                  />
-                   <TextInput
-                value={vital24}
-                onChangeText={(text) => setvital24(text)}
-                //  placeholder="Weight in (kg)" 
-                keyboardType = 'numeric'
-                 style={{borderBottomWidth:1}}
-                  />
-            </View>
+                </View>
 
-            <View>
-                <Text>Oxygen Saturation (%)</Text>
-                <TextInput
-                value={vital5}
-                onChangeText={(text) => setvital5(text)}
-                //  placeholder="Weight in (kg)" 
-                keyboardType = 'numeric'
-                 style={{borderBottomWidth:1}}
-                  />
-            </View>
+                <View>
+                    <Text>Blood Pressure (mmHg)</Text>
+                    <TextInput
+                        value={vital4}
+                        onChangeText={(text) => setvital4(text)}
+                        //  placeholder="Weight in (kg)" 
+                        keyboardType='numeric'
+                        style={{ borderBottomWidth: 1 }}
+                    />
+                    <TextInput
+                        value={vital24}
+                        onChangeText={(text) => setvital24(text)}
+                        //  placeholder="Weight in (kg)" 
+                        keyboardType='numeric'
+                        style={{ borderBottomWidth: 1 }}
+                    />
+                </View>
 
-            <View>
-                <Text>Respiratory Rate (breaths/min)</Text>
-                <TextInput
-                value={vital6}
-                onChangeText={(text) => setvital6(text)}
-                //  placeholder="Weight in (kg)" 
-                keyboardType = 'numeric'
-                 style={{borderBottomWidth:1}}
-                  />
-            </View>
+                <View>
+                    <Text>Oxygen Saturation (%)</Text>
+                    <TextInput
+                        value={vital5}
+                        onChangeText={(text) => setvital5(text)}
+                        //  placeholder="Weight in (kg)" 
+                        keyboardType='numeric'
+                        style={{ borderBottomWidth: 1 }}
+                    />
+                </View>
 
-            <View>
-                <Text>Heart Rate (bpm)</Text>
-                <TextInput
-                value={vital7}
-                onChangeText={(text) => setvital7(text)}
-                //  placeholder="Weight in (kg)" 
-                keyboardType = 'numeric'
-                 style={{borderBottomWidth:1}}
-                  />
-            </View>
-            <View>
-                <Text>Body Temperature (C)</Text>
-                <TextInput
-                value={vital8}
-                onChangeText={(text) => setvital8(text)}
-                //  placeholder="Weight in (kg)" 
-                keyboardType = 'numeric'
-                 style={{borderBottomWidth:1}}
-                  />
-            </View>
+                <View>
+                    <Text>Respiratory Rate (breaths/min)</Text>
+                    <TextInput
+                        value={vital6}
+                        onChangeText={(text) => setvital6(text)}
+                        //  placeholder="Weight in (kg)" 
+                        keyboardType='numeric'
+                        style={{ borderBottomWidth: 1 }}
+                    />
+                </View>
 
-            <View>
-                <Text> Capillary Blood Glucose (mg/dL)</Text>
-                <TextInput
-                value={vital9}
-                onChangeText={(text) => setvital9(text)}
-                //  placeholder="Weight in (kg)" 
-                keyboardType = 'numeric'
-                 style={{borderBottomWidth:1}}
-                  />
-            </View>
-            <View>
-                <Text>Head Circumference (cm)</Text>
-                <TextInput
-                value={vital10}
-                onChangeText={(text) => setvital10(text)}
-                //  placeholder="Weight in (kg)" 
-                keyboardType = 'numeric'
-                 style={{borderBottomWidth:1}}
-                  />
-            </View>
+                <View>
+                    <Text>Heart Rate (bpm)</Text>
+                    <TextInput
+                        value={vital7}
+                        onChangeText={(text) => setvital7(text)}
+                        //  placeholder="Weight in (kg)" 
+                        keyboardType='numeric'
+                        style={{ borderBottomWidth: 1 }}
+                    />
+                </View>
+                <View>
+                    <Text>Body Temperature (C)</Text>
+                    <TextInput
+                        value={vital8}
+                        onChangeText={(text) => setvital8(text)}
+                        //  placeholder="Weight in (kg)" 
+                        keyboardType='numeric'
+                        style={{ borderBottomWidth: 1 }}
+                    />
+                </View>
 
-        </ScrollView>
+                <View>
+                    <Text> Capillary Blood Glucose (mg/dL)</Text>
+                    <TextInput
+                        value={vital9}
+                        onChangeText={(text) => setvital9(text)}
+                        //  placeholder="Weight in (kg)" 
+                        keyboardType='numeric'
+                        style={{ borderBottomWidth: 1 }}
+                    />
+                </View>
+                <View>
+                    <Text>Head Circumference (cm)</Text>
+                    <TextInput
+                        value={vital10}
+                        onChangeText={(text) => setvital10(text)}
+                        //  placeholder="Weight in (kg)" 
+                        keyboardType='numeric'
+                        style={{ borderBottomWidth: 1 }}
+                    />
+                </View>
+
+            </ScrollView>
         </>
     )
 }

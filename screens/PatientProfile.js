@@ -1,5 +1,5 @@
-import React, {useEffect,useState} from 'react'
-import {Dimensions, StyleSheet, Text, View, TouchableOpacity,TouchableWithoutFeedback, ScrollView, Image, SafeAreaView } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Dimensions, StyleSheet, Text, View, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Image, SafeAreaView } from 'react-native'
 
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,24 +23,25 @@ import URL from '../api'
 const { width, height } = Dimensions.get("window");
 const cardWidth = width / 4;
 
-const PatientProfile = ({navigation, route}) => {
+const PatientProfile = ({ navigation, route }) => {
 
     const Patient_ID = route.params
 
-    const [Patient_Data, setPatientData] =useState([])
-    const [PatientBday, setPatientBday] =useState('')
+    const [Patient_Data, setPatientData] = useState([])
+    const [PatientBday, setPatientBday] = useState('')
     const [BloodType, setBloodType] = useState('')
-    const [CivilStatus,setCivilStatus] = useState('')
+    const [CivilStatus, setCivilStatus] = useState('')
+    const [age, setAge] = useState('')
     const [Gender, setGender] = useState('')
-    const [mobile,setMobile] = useState('')
-    const [email,setEmail] = useState('')
+    const [mobile, setMobile] = useState('')
+    const [email, setEmail] = useState('')
 
-    useEffect(async() => {
+    useEffect(async () => {
         let token;
         token = await AsyncStorage.getItem('userToken');
-       
-    
-        fetch(URL + 'api/v1/patients/'+Patient_ID, {
+
+
+        fetch(URL + 'api/v1/patients/' + Patient_ID, {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -50,52 +51,52 @@ const PatientProfile = ({navigation, route}) => {
         })
             .then((response) => response.json())
             .then((json) => {
-              
-              
-               console.log(JSON.stringify(json))
 
-                 setPatientData(json)
-                 if (json.profile.birthday != null)
-                 {
-                    
+
+                console.log(JSON.stringify(json))
+
+                setPatientData(json)
+                if (json.profile.birthday != null) {
+
                     setPatientBday(json.profile.birthday)
-                 }
+                }
 
-                 if (json.profile.blood_type.name != null)
-                 {
+                if (json.profile.blood_type.name != null) {
                     setBloodType(json.profile.blood_type.name)
-                 }
+                }
 
-                 if (json.profile.blood_type.name != null)
-                 {
+                if (json.profile.blood_type.name != null) {
                     setCivilStatus(json.profile.civil_status.name)
-                 }
+                }
 
-                 if (json.profile.gender != null)
-                 {
+                if (json.profile.gender != null) {
                     setGender(json.profile.gender)
-                 }
+                }
 
+                if (json.profile.age != null) {
+                    setAge(json.profile.age)
+                }
+                
 
-                 if (json.contact.email != null){
-                     setEmail(json.contact.email)
-                 }
+                if (json.contact.email != null) {
+                    setEmail(json.contact.email)
+                }
 
-                 if (json.contact.phone_number != null){
+                if (json.contact.phone_number != null) {
                     setMobile(json.contact.phone_number)
                 }
 
-               
-    
+
+
             })
             .catch((error) => {
-    
-                console.log(error);
-    
-            });
-    },[])
 
-  
+                console.log(error);
+
+            });
+    }, [])
+
+
 
     return (
         <>
@@ -115,7 +116,7 @@ const PatientProfile = ({navigation, route}) => {
                     </View>
 
                     <View>
-                          
+
                     </View>
 
 
@@ -128,117 +129,128 @@ const PatientProfile = ({navigation, route}) => {
                     style={styles.container}
                     contentContainerStyle={styles.scrollContainer}
                 >
-                    <Image source={{uri: Patient_Data.photo_url}} style={styles.Avatar}></Image>
+                    <Image source={{ uri: Patient_Data.photo_url }} style={styles.Avatar}></Image>
                     <Text style={styles.nameText}>{Patient_Data.full_name}</Text>
                     <Text style={styles.daysText}>Patient ID: {Patient_Data.patient_no}</Text>
 
-                    <View style={{alignItems: 'center', marginVertical:15}}>
-                        <TouchableOpacity style={{padding:10, backgroundColor:'#008FFB', borderRadius:10}}>
-                            <Text style={{color:'white', fontSize:14, fontWeight:'bold'}}>Edit Profile</Text>
+                    <View style={{ alignItems: 'center', marginVertical: 15 }}>
+                        <TouchableOpacity style={{ padding: 10, backgroundColor: '#008FFB', borderRadius: 10 }}>
+                            <Text style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}>Edit Profile</Text>
                         </TouchableOpacity>
                     </View>
 
-                        <View style={{marginTop:5, padding:20}}>
-                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                    <Text style={{fontWeight:'bold'}}>Birthdate: </Text>  
-                                     <Text>{moment(PatientBday).format('ll')}</Text>
-                                </View>   
-                                <View style={{flexDirection: 'row', }}>
-                                    {/* <Text>Gender:{Patient_Data.profile.gender}</Text>   */}
-                                     
-                                </View> 
-                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                    <Text style={{fontWeight:'bold'}}>BloodType:</Text>  
-                                    <Text>{BloodType}</Text>
-                                </View>  
-                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                    <Text style={{fontWeight:'bold'}}>Civil Status:</Text>  
-                                    <Text>{CivilStatus}</Text>
-                                     
-                                </View>  
-                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                    <Text style={{fontWeight:'bold'}}>Gender:</Text> 
-                                    <Text>{Gender === 'male' ? 'MALE' : 'FEMALE'}</Text> 
-                                     
-                                </View> 
-
-                                <View style={{width: '100%',borderWidth:0.5, borderColor:'gray', marginVertical:10}}/>
-
-                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                    <Text style={{fontWeight:'bold'}}>Phone:</Text> 
-                                    <Text>{mobile != '' ? mobile : ''}</Text> 
-                                     
-                                </View> 
-                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                    <Text style={{fontWeight:'bold'}}>Email:</Text> 
-                                    <Text>{email != '' ? email : ''}</Text> 
-                                     
-                                </View> 
-
-                                
-
-                    <View>
-                        
-                    </View>
-
-                                
-                                
+                    <View style={{ marginTop: 5, padding: 20 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ fontWeight: 'bold' }}>Birthdate: </Text>
+                            {PatientBday != '' ? (<Text>{moment(PatientBday).format('ll')}</Text>) : (<Text>-</Text>)}
                         </View>
+                        <View style={{ flexDirection: 'row', }}>
+                            {/* <Text>Gender:{Patient_Data.profile.gender}</Text>   */}
+
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical:5}}>
+                            <Text style={{ fontWeight: 'bold' }}>Age:</Text>
+                            <Text>{age  != '' ? age : '-'}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ fontWeight: 'bold' }}>BloodType:</Text>
+                            <Text>{BloodType  != '' ? BloodType : '-'}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginVertical:5}}>
+                            <Text style={{ fontWeight: 'bold' }}>Civil Status:</Text>
+                            <Text>{CivilStatus  != '' ? CivilStatus : '-'}</Text>
+
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ fontWeight: 'bold' }}>Gender:</Text>
+                            <Text>{Gender === 'male' ? 'MALE' : 'FEMALE'}</Text>
+
+                        </View>
+
+                        <View style={{ width: '100%', borderWidth: 0.5, borderColor: 'gray', marginVertical: 10 }} />
+
+
+                        {mobile != '' ? (<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ fontWeight: 'bold' }}>Phone:</Text>
+                            <Text>{mobile != '' ? mobile : ''}</Text>
+                        </View>) : (<View />)}
+
+
+                        {email != '' ? (
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text style={{ fontWeight: 'bold' }}>Email:</Text>
+                                <Text>{email != '' ? email : ''}</Text>
+                            </View>
+                        ) : (<View />)}
+
+
+
+
+
+                        <View>
+
+                        </View>
+
+
+
+                    </View>
 
                     <View style={{ padding: 10, }}>
                         {/* History */}
-                    <TouchableWithoutFeedback onPress={() => navigation.navigate('HistoryList',Patient_Data.id)}>
-                        <View style={styles.menuRowContent}>
-                            <View style={styles.iconContent}>
-                                <Foundation
-                                    name="clipboard-notes"
-                                    size={26}
-                                    color='black'
-                                    style={{ alignSelf: "center", backgroundColor: 'rgba(0,143,251,0.2)', padding: 10, borderRadius: 5 }}
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('HistoryList', Patient_Data.id)}>
+                            <View style={styles.menuRowContent}>
+                                <View style={styles.iconContent}>
+                                    <Foundation
+                                        name="clipboard-notes"
+                                        size={26}
+                                        color='black'
+                                        style={{ alignSelf: "center", backgroundColor: 'rgba(0,143,251,0.2)', padding: 10, borderRadius: 5 }}
+                                    />
+                                </View>
+                                <View style={styles.menuRowsContent}>
+                                    <Text style={styles.menuRowTitle}>History</Text>
+
+                                </View>
+                                <IconMCI
+                                    name="greater-than"
+                                    size={18}
+                                    color='rgba(0,143,251,0.5)'
+                                    style={{ alignSelf: "center" }}
                                 />
                             </View>
-                            <View style={styles.menuRowsContent}>
-                                <Text style={styles.menuRowTitle}>History</Text>
-
-                            </View>
-                            <IconMCI
-                                name="greater-than"
-                                size={18}
-                                color='rgba(0,143,251,0.5)'
-                                style={{ alignSelf: "center" }}
-                            />
-                        </View>
                         </TouchableWithoutFeedback>
                         {/* <Divider style={styles.divider} /> */}
 
                         {/* Vitals */}
-                        
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('VitalsList',Patient_Data.id)}>
-                        <View style={styles.menuRowContent}>
-                            <View style={styles.iconContent}>
-                                <FontAwesome5
-                                    name="heartbeat"
-                                    size={24}
-                                    color='black'
-                                    style={{ alignSelf: "center", backgroundColor: 'rgba(0,143,251,0.2)', padding: 10, borderRadius: 5 }}
+
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('VitalsList', Patient_Data.id)}>
+                            <View style={styles.menuRowContent}>
+                                <View style={styles.iconContent}>
+                                    <FontAwesome5
+                                        name="heartbeat"
+                                        size={24}
+                                        color='black'
+                                        style={{ alignSelf: "center", backgroundColor: 'rgba(0,143,251,0.2)', padding: 10, borderRadius: 5 }}
+                                    />
+                                </View>
+                                <View style={styles.menuRowsContent}>
+                                    <Text style={styles.menuRowTitle}>Vitals</Text>
+
+                                </View>
+                                <IconMCI
+                                    name="greater-than"
+                                    size={18}
+                                    color='rgba(0,143,251,0.5)'
+                                    style={{ alignSelf: "center" }}
                                 />
                             </View>
-                            <View style={styles.menuRowsContent}>
-                                <Text style={styles.menuRowTitle}>Vitals</Text>
-
-                            </View>
-                            <IconMCI
-                                name="greater-than"
-                                size={18}
-                                color='rgba(0,143,251,0.5)'
-                                style={{ alignSelf: "center" }}
-                            />
-                        </View>
                         </TouchableWithoutFeedback>
 
                         {/* Notes */}
 
-                        <View style={styles.menuRowContent}>
+                        <TouchableOpacity 
+                        onPress={()=> navigation.navigate('Encounters',Patient_Data.id)}
+                        style={styles.menuRowContent}>
                             <View style={styles.iconContent}>
                                 <IconMCI
                                     name="comment-edit-outline"
@@ -257,7 +269,7 @@ const PatientProfile = ({navigation, route}) => {
                                 color='rgba(0,143,251,0.5)'
                                 style={{ alignSelf: "center" }}
                             />
-                        </View>
+                        </TouchableOpacity>
 
 
                         {/* Lab Results */}
@@ -320,7 +332,7 @@ const PatientProfile = ({navigation, route}) => {
 
 
 
-                </View>
+                    </View>
                 </ScrollView>
             </View>
 
@@ -334,7 +346,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    scrollContainer: { paddingBottom: 100},
+    scrollContainer: { paddingBottom: 100 },
     Avatar: {
         width: 130,
         height: 130,

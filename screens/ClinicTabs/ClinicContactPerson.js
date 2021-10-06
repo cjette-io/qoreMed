@@ -91,18 +91,22 @@ const ClinicContactPerson = ({id}) => {
 
            <View style={{flex:1 }}>
                      <View>
+                     <Text style={{fontWeight: 'bold', fontSize:14}}>Name</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Contact Person" value={contact_person} onChangeText={(text) => setcontact_person(text)} ></TextInput>
                     </View>
 
                     <View style={{marginVertical:10}}>
+                    <Text style={{fontWeight: 'bold', fontSize:14}}>Email Address</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Email" value={email} onChangeText={(text) => setemail(text)} ></TextInput>
                     </View>
 
                     <View>
+                    <Text style={{fontWeight: 'bold', fontSize:14}}>Mobile No.</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Mobile No." value={phone_number} onChangeText={(text) => setphone_number(text)} ></TextInput>
                     </View>
 
                     <View style={{marginVertical:10}}>
+                    <Text style={{fontWeight: 'bold', fontSize:14}}>Landline</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Landline" value={landline} onChangeText={(text) => setlandline(text)} ></TextInput>
                     </View>
 

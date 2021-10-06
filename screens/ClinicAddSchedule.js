@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {Alert, StyleSheet, Text, View, TouchableOpacity, ScrollView, SafeAreaView, TextInput } from 'react-native'
+import { Alert, StyleSheet, Text, View, TouchableOpacity, ScrollView, SafeAreaView, TextInput } from 'react-native'
 import { RadioButton } from 'react-native-paper';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from 'moment';
@@ -26,11 +26,11 @@ const ClinicAddSchedule = ({ route, navigation }) => {
     const [isTimeStartPickerVisible, setisTimeStartPickerVisible] = useState(false);
     const [isTimeEndPickerVisible, setisTimeEndPickerVisible] = useState(false);
 
-    const [serving_time , setserving_time] = useState('')
-    const [capacity, setCapacity] = useState('')
+    const [serving_time, setserving_time] = useState('')
+    const [capacity, setCapacity] = useState(10)
     const [insertDate, setInsertDate] = useState('')
-    const [insertEndDate, setEndInsertDate] = useState('')
-    const [startTime, setStartTime] = useState('')
+    const [insertEndDate, setEndInsertDate] = useState(null)
+    const [startTime, setStartTime] = useState(null)
     const [endTime, setEndTime] = useState('')
 
     const showDatePicker = () => {
@@ -110,11 +110,11 @@ const ClinicAddSchedule = ({ route, navigation }) => {
     }
 
     const handleInsertTimeStartConfirm = (data) => {
-          var hours = new Date(data).getHours(); //Current Hours
+        var hours = new Date(data).getHours(); //Current Hours
         var min = new Date(data).getMinutes(); //Current Minutes
-        hours = hours < 10 ? '0'+hours : hours
-        min = min < 10 ? '0'+min : min
-        const setTime = hours + ':' + min ;
+        hours = hours < 10 ? '0' + hours : hours
+        min = min < 10 ? '0' + min : min
+        const setTime = hours + ':' + min;
         console.log(setTime)
         setStartTime(setTime)
         setisTimeStartPickerVisible(false);
@@ -123,9 +123,9 @@ const ClinicAddSchedule = ({ route, navigation }) => {
     const handleInsertTimeEndConfirm = (data) => {
         var hours = new Date(data).getHours(); //Current Hours
         var min = new Date(data).getMinutes(); //Current Minutes
-        hours = hours < 10 ? '0'+hours : hours
-        min = min < 10 ? '0'+min : min
-        const setTime = hours + ':' + min ;
+        hours = hours < 10 ? '0' + hours : hours
+        min = min < 10 ? '0' + min : min
+        const setTime = hours + ':' + min;
         console.log(setTime)
         setEndTime(setTime)
         setisTimeEndPickerVisible(false);
@@ -154,17 +154,18 @@ const ClinicAddSchedule = ({ route, navigation }) => {
 
 
     const [checkedCType, setCheckedCType] = React.useState(null);
-    const [selectedCType, setselectedCType] = React.useState('');
+    const [selectedCType, setselectedCType] = React.useState(null);
 
     const ConsultationType = [
         {
-            con_id: '1',
+            con_id: 0,
             con_name: 'On-Site Consultation'
         },
         {
-            con_id: '0',
+            con_id: 1,
             con_name: 'Virtual Consultation'
         }
+       
     ]
 
     const [checkedfrequency, setCheckedfrequency] = React.useState(null);
@@ -193,11 +194,11 @@ const ClinicAddSchedule = ({ route, navigation }) => {
         setCheckedSCType(i)
         setselectedSCType(id)
 
-         if (id == 'by-capacity') {
-            setserving_time('')
-         }else {
-            setCapacity('')
-         }
+        if (id == 'by-capacity') {
+            setserving_time(30)
+        } else {
+            setCapacity(10)
+        }
 
     }
     const rbCType = (i, id) => {
@@ -210,8 +211,8 @@ const ClinicAddSchedule = ({ route, navigation }) => {
         setCheckedfrequency(i)
         setselectedfrequency(id)
 
-        if (id ===  'never'){
-            setEndInsertDate('')
+        if (id === 'never') {
+            setEndInsertDate(null)
         }
 
     }
@@ -219,6 +220,7 @@ const ClinicAddSchedule = ({ route, navigation }) => {
 
 
     const AddSchedule = async () => {
+       
         let token;
         token = await AsyncStorage.getItem('userToken');
         fetch(URL + 'api/v1/clinics/'+ id +'/schedules', {
@@ -239,15 +241,16 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                 serving_time,serving_time,
                 capacity,capacity
 
-                    //  type: "slotted",
-                    // is_virtual : 0,
-                    // start_time: "13:00",
-                    // end_time:"14:00",
-                    // frequency:"every_week",
-                    // start_date:"2021/7/28",
-                    // end_date : "2021/8/28",
-                    // serving_time : 30
-
+                // console.log('Schedule type' + selectedSCType,)
+                // console.log('is_virtual ' + selectedCType)
+                // console.log('Start time' +startTime,)
+                // console.log('End time' +endTime,)
+                // console.log( 'Selected Frequency' +selectedfrequency)
+                // console.log('Date Insert' +insertDate)
+                // console.log('Date End' +insertEndDate)
+                // console.log('Serving Time' +serving_time,)
+                // console.log('Capacity' +capacity)
+                
             })
         })
             .then((response) => response.json())
@@ -258,7 +261,9 @@ const ClinicAddSchedule = ({ route, navigation }) => {
 
                 if (json.message == 'The given data was invalid.')
                 {
-                  
+                    if ('end_date' in json.errors) {
+                      alert(json.errors.end_date[0])
+                      }
                 }else{
                     navigation.navigate('ClinicDetails')
                 }
@@ -270,6 +275,11 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                 console.log(error);
 
             });
+
+
+
+
+
     }
 
 
@@ -333,15 +343,15 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                     {selectedSCType === "by-capacity" ? (
                         <View>
                             <TextInput
-                            onChangeText={(text) => setCapacity(text)}
-                             keyboardType="numeric" style={{ borderBottomWidth: 1 }} placeholder="Insert total patient"></TextInput>
+                                onChangeText={(text) => setCapacity(text)}
+                                keyboardType="numeric" style={{ borderBottomWidth: 1 }} placeholder="Insert total patient"></TextInput>
                         </View>
 
                     ) : (
                         <View>
                             <TextInput
-                            onChangeText={(text) => setserving_time(text)}
-                             keyboardType="numeric" style={{ borderBottomWidth: 1 }} placeholder="Insert serving time per patient in minutes"></TextInput>
+                                onChangeText={(text) => setserving_time(text)}
+                                keyboardType="numeric" style={{ borderBottomWidth: 1 }} placeholder="Insert serving time per patient in minutes"></TextInput>
                         </View>
 
                     )}
@@ -360,7 +370,7 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                                 <RadioButton
 
 
-                                    status={checkedCType === i ? 'checked' : 'unchecked'}
+                                    status={checkedCType === item.con_id ? 'checked' : 'unchecked'}
                                     onPress={() => rbCType(i, item.con_id)}
                                 />
                                 <Text style={{ fontSize: 16 }}>{item.con_name}</Text>

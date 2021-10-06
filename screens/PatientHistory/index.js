@@ -14,8 +14,16 @@ import Substances from './Substances'
 import SubstanceAddScreen from './SubstanceAddScreen'
 
 import SexualHistory from './SexualHistory'
+import SexualHistoryAdd from './SexualHistoryAdd'
+
 import MedicalHistory from './MedicalHistory'
+import MedicalHistoryAddScreen from './MedicalHistoryAddScreen'
+
 import FamilyHistory from './FamilyHistory'
+import FamilyAddHistory from './FamilyAddHistory'
+
+
+
 
 export {
     Medications,
@@ -34,6 +42,17 @@ export {
     SubstanceAddScreen,
 
     SexualHistory,
+    SexualHistoryAdd,
+
     MedicalHistory,
-    FamilyHistory
+    MedicalHistoryAddScreen,
+    
+    FamilyHistory,
+    FamilyAddHistory,
+
+    
+
+
+
+
 }

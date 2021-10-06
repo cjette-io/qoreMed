@@ -157,68 +157,81 @@ const PatientAddScreen = ({ navigation }) => {
         seterrbdate(null)
         setisSaving(true)
 
-        let token;
-        token = await AsyncStorage.getItem('userToken');
+        if (Fname == '') {
+            seterrFname('The first name field is required')
+            setisSaving(false)
+        }
+        if (Lname == '') {
+            seterrLname('The last name field is required')
+            setisSaving(false)
+        }
 
-        fetch(URL + 'api/v1/patients', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + token
-            }, body: JSON.stringify({
-                last_name: Lname,
-                first_name: Fname,
-                middle_name: Mname,
-                suffix: suffix,
-                birthday: insertDate,
-                gender: selectedgender,
-                civil_status_id: selectedCivil,
-                blood_type_id: selectedbloodtype,
-                nationality: nationality
+        if(Fname != '' && Lname != '') {
+            let token;
+            token = await AsyncStorage.getItem('userToken');
+    
+            fetch(URL + 'api/v1/patients', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token
+                }, body: JSON.stringify({
+                    last_name: Lname,
+                    first_name: Fname,
+                    middle_name: Mname,
+                    suffix: suffix,
+                    birthday: insertDate,
+                    gender: selectedgender,
+                    civil_status_id: selectedCivil,
+                    blood_type_id: selectedbloodtype,
+                    nationality: nationality
+                })
             })
-        })
-            .then((response) => response.json())
-            .then((json) => {
-
-                console.log(json)
-
-                if (json.message === "The given data was invalid.") {
-                    if ('first_name' in json.errors) {
-                        seterrFname(json.errors.first_name[0])
+                .then((response) => response.json())
+                .then((json) => {
+    
+                    console.log(json)
+    
+                    if (json.message === "The given data was invalid.") {
+                        if ('first_name' in json.errors) {
+                            seterrFname(json.errors.first_name[0])
+                        }
+    
+                        if ('last_name' in json.errors) {
+                            seterrLname(json.errors.last_name[0])
+                        }
+    
+                        if ('gender' in json.errors) {
+                            seterrGender(json.errors.gender[0])
+                        }
+    
+                        if ('birthday' in json.errors) {
+                            seterrbdate(json.errors.birthday[0])
+                          }
+    
+                          if ('middle_name' in json.errors) {
+                            seterrMname(json.errors.middle_name[0])
+                          }   
+    
+                          setisSaving(false)
+    
+                    }else{
+                        alert('Record Successfully saved')
+                        setisSaving(false)
+                        navigation.goBack()
                     }
+    
+                })
+                .catch((error) => {
+    
+                    console.log(error);
+    
+                });
+    
+        }
 
-                    if ('last_name' in json.errors) {
-                        seterrLname(json.errors.last_name[0])
-                    }
-
-                    if ('gender' in json.errors) {
-                        seterrGender(json.errors.gender[0])
-                    }
-
-                    if ('birthday' in json.errors) {
-                        seterrbdate(json.errors.birthday[0])
-                      }
-
-                      if ('middle_name' in json.errors) {
-                        seterrMname(json.errors.middle_name[0])
-                      }   
-
-                      setisSaving(false)
-
-                }else{
-                    alert('Record Successfully saved')
-                    setisSaving(false)
-                    navigation.goBack()
-                }
-
-            })
-            .catch((error) => {
-
-                console.log(error);
-
-            });
-
+        
 
 
 
@@ -243,10 +256,10 @@ const PatientAddScreen = ({ navigation }) => {
                         <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>New Patient</Text>
                     </View>
 
-                    <TouchableOpacity onPress={() => isSaving == true ? null : SavePatientInfo()}>
+                    {/* <TouchableOpacity onPress={() => isSaving == true ? null : SavePatientInfo()}>
                         <Text style={{ color: isSaving == true ? 'rgba(33,150,243, 0.3)' : '#008FFB' }}>{isSaving == true ? 'Saving...' : 'DONE'}</Text>
-                    </TouchableOpacity>
-
+                    </TouchableOpacity> */}
+                    <View/>
 
                 </View>
             </SafeAreaView>
@@ -397,6 +410,14 @@ const PatientAddScreen = ({ navigation }) => {
                             value={nationality}
                             onChangeText={(text) => setNationality(text)}
                         ></TextInput>
+                    </View>
+
+                    <View style={{marginTop:20}}>
+                        <TouchableOpacity
+                        onPress={() => isSaving == true ? null : SavePatientInfo()}
+                         style={{alignItems: 'center',borderRadius:5, backgroundColor:'#0A90FF', padding:10}}>
+                                <Text style={{color:'white', fontWeight: '700',fontSize:16 }}>{isSaving == true ? 'Saving...' : 'Save'}</Text>
+                        </TouchableOpacity>
                     </View>
 
 
