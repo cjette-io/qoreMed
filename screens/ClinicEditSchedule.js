@@ -92,10 +92,12 @@ const ClinicEditSchedule = ({ route, navigation }) => {
 
         if (data.is_virtual == true) {
             setCheckedCType(1)
-            setselectedCType(0)
-        } else {
-            setCheckedCType(0)
             setselectedCType(1)
+        } 
+
+        if(data.is_virtual == false) {
+            setCheckedCType(0)
+            setselectedCType(0)
         }
 
 
@@ -110,6 +112,7 @@ const ClinicEditSchedule = ({ route, navigation }) => {
         setselectedCType(id)
 
     }
+    const [errEndTime, setErrEndTime] = useState('')
 
     const EditSchedule = () => {
          
@@ -134,12 +137,14 @@ const ClinicEditSchedule = ({ route, navigation }) => {
             .then((response) => response.json())
             .then((json) => {
 
-                console.log(json.message)
+                console.log(json)
 
 
                 if (json.message == 'The given data was invalid.')
                 {
-
+                  if ("end_time" in json.errors) {
+                      alert(json.errors.end_time)
+                  }
                 }else{
                     alert(JSON.stringify(json.message))
                     navigation.navigate('ClinicDetails')

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity,SafeAreaView } from 'react-native'
 import { Agenda } from "react-native-calendars";
 import FabAppointment from './components/FabAppointment'
 
@@ -72,10 +72,10 @@ const Calendar = () => {
     let group = Appointment.reduce((r, a) => {
       //  console.log("a", a);
       //   console.log('r', r); 
-        r[a.date] = [...r[a.date] || [], a];
-         return r;
-        },{});
-         console.log (group);
+      r[a.date] = [...r[a.date] || [], a];
+      return r;
+    }, {});
+    console.log(group);
 
   }, [])
 
@@ -90,21 +90,58 @@ const Calendar = () => {
         let group = json.reduce((r, a) => {
           //  console.log("a", a);
           //   console.log('r', r); 
-            r[a.date] = [...r[a.date] || [], a];
-             return r;
-            },{});
-             console.log("group", group);
+          r[a.date] = [...r[a.date] || [], a];
+          return r;
+        }, {});
+        console.log("group", group);
 
 
 
       })
   }
+  const refAgenda = useRef();
+
+  const onPressToday = () => {
+    const today = new Date();
+    refAgenda.current.chooseDay(today);
+  };
 
 
 
   return (
     <View style={{ flex: 1 }}>
+      <SafeAreaView
+        style={{ padding: 10, backgroundColor: 'white' }}
+      >
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <IconION name="arrow-back" size={20} color='black' />
+            </TouchableOpacity>
+
+          </View>
+
+          <View style={{ justifyContent: 'center' }}>
+            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>Appointments</Text>
+          </View>
+
+          <TouchableOpacity
+            onPress={onPressToday}
+            style={{flexDirection: 'row', justifyContent:'center',alignItems: 'center'}}
+          >
+            <IconION name="calendar" size={15} color='black' style={{right:5}} />
+            <Text>Today</Text>
+          </TouchableOpacity>
+
+
+        </View>
+      </SafeAreaView>
+
       <Agenda
+        ref={refAgenda}
+        loadItemsForMonth={(month) => { console.log('trigger items loading') }}
+        hideKnob={false}
+        showClosingKnob={true}
         items={{
           '2021-07-16': [{ name: 'item 16', }],
           '2021-07-17': [{ name: 'item 17 - any js object' }],
@@ -132,6 +169,8 @@ const Calendar = () => {
             </View>
           );
         }}
+
+
 
 
       />

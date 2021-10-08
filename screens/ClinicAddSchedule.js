@@ -217,10 +217,21 @@ const ClinicAddSchedule = ({ route, navigation }) => {
 
     }
 
+    const [errEnd_time, seterrEnd_time] = useState('')
+    const [errStart_date, setStart_date] = useState('')
+    const [errStart_time, seterrstart_time] = useState('')
+    const [errtype, setErrtype] = useState('')
+    const [errEnd_date, seterrEnd_date] = useState('')
 
+    const [isSaving, setIsSaving] = useState(false)
 
     const AddSchedule = async () => {
-       
+        setIsSaving(true)
+        setErrtype('')
+        setStart_date('')
+        seterrstart_time('')
+        seterrEnd_time('')
+
         let token;
         token = await AsyncStorage.getItem('userToken');
         fetch(URL + 'api/v1/clinics/'+ id +'/schedules', {
@@ -240,16 +251,6 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                 end_date: insertEndDate,
                 serving_time,serving_time,
                 capacity,capacity
-
-                // console.log('Schedule type' + selectedSCType,)
-                // console.log('is_virtual ' + selectedCType)
-                // console.log('Start time' +startTime,)
-                // console.log('End time' +endTime,)
-                // console.log( 'Selected Frequency' +selectedfrequency)
-                // console.log('Date Insert' +insertDate)
-                // console.log('Date End' +insertEndDate)
-                // console.log('Serving Time' +serving_time,)
-                // console.log('Capacity' +capacity)
                 
             })
         })
@@ -261,11 +262,31 @@ const ClinicAddSchedule = ({ route, navigation }) => {
 
                 if (json.message == 'The given data was invalid.')
                 {
-                    if ('end_date' in json.errors) {
-                      alert(json.errors.end_date[0])
+                    if ('type' in json.errors) {
+                        setErrtype(json.errors.type)
                       }
+                      if ('start_date' in json.errors) {
+                        setStart_date(json.errors.start_date)
+                      }
+
+                      if ('start_time' in json.errors) {
+                        seterrstart_time(json.errors.start_time)
+                      }
+
+                      if ('end_time' in json.errors) {
+                        seterrEnd_time(json.errors.end_time)
+                      }
+
+                      if ('end_date' in json.errors) {
+                        seterrEnd_date(json.errors.end_date)
+                      }
+
+                      setIsSaving(false)
+
+
                 }else{
                     navigation.navigate('ClinicDetails')
+                    setIsSaving(false)
                 }
 
 
@@ -304,8 +325,9 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                     </View>
 
                     <TouchableOpacity onPress={() => AddSchedule()} style={{ flexDirection: 'row' }}>
-                        <IconAnt name="plus" size={18} color='black' />
-                        <Text>ADD</Text>
+                       
+                      {isSaving == true ? ( <Text>Saving ...</Text>) : ( <Text>ADD</Text>)}
+                       
                     </TouchableOpacity>
 
 
@@ -334,7 +356,7 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                         )
                     })}
 
-
+                    {errtype != '' ? (  <Text style={{color: 'red'}}>{errtype}</Text>) : (null)} 
 
                 </View>
 
@@ -356,7 +378,7 @@ const ClinicAddSchedule = ({ route, navigation }) => {
 
                     )}
 
-
+                  
 
                 </View>
 
@@ -378,6 +400,9 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                         )
                     })}
 
+
+                 
+
                 </View>
 
                 <View style={{ marginTop: 20 }}>
@@ -387,6 +412,10 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                             <Text style={[styles.inputs, { color: '#999', }]}>{!insertDate ? 'mm/dd/yyyy' : insertDate}</Text>
                         </View>
                     </TouchableOpacity>
+
+                    <View>
+                        {errStart_date != '' ? (  <Text style={{color: 'red'}}>{errStart_date}</Text>) : (null)} 
+                    </View>
                 </View>
 
 
@@ -398,11 +427,20 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                         </View>
                     </TouchableOpacity>
 
+                    <View>
+                        {errStart_time != '' ? (  <Text style={{color: 'red'}}>{errStart_time}</Text>) : (null)} 
+                    </View>
+
                     <TouchableOpacity onPress={() => showEndTimePicker()}>
                         <View>
-                            <Text style={[styles.inputs, { color: '#999', }]}>{!endTime ? 'Insert start time' : endTime}</Text>
+                            <Text style={[styles.inputs, { color: '#999', }]}>{!endTime ? 'Insert end time' : endTime}</Text>
                         </View>
                     </TouchableOpacity>
+                    <View>
+                        {errEnd_time != '' ? (  <Text style={{color: 'red'}}>{errEnd_time}</Text>) : (null)} 
+                    </View>
+
+                    
                 </View>
 
                 <View style={{ marginTop: 20 }}>
@@ -436,6 +474,8 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                                     <Text style={[styles.inputs, { color: '#999', }]}>{!insertEndDate ? 'mm/dd/yyyy' : insertEndDate}</Text>
                                 </View>
                             </TouchableOpacity>
+
+                          {errEnd_date != '' ? (<Text style={{color: 'red'}}>{errEnd_date}</Text>) : (null)}
                         </>
                     ) : null}
 

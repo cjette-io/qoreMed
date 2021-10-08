@@ -21,6 +21,7 @@ const ClinicInformation = ({id}) => {
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
     const [landmark, setlandmark] = useState('')
+    const [Hospital, setHospital] = useState('')
     const [fee, setFee]= useState('')
 
     const [token , setToken] = useState('')
@@ -154,7 +155,7 @@ const ClinicInformation = ({id}) => {
         <ScrollView
         vertical
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom:20}}
+        contentContainerStyle={{paddingBottom:100}}
          style={{padding:10, flex:1, backgroundColor:'white'}}>
 
             {DisplayImage()}
@@ -173,6 +174,11 @@ const ClinicInformation = ({id}) => {
 
                     <View>
                     <Text style={{fontWeight: 'bold', fontSize:14}}>Landmark</Text>
+                        <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Landmark" value={landmark} onChangeText={(text) => setlandmark(text)} ></TextInput>
+                    </View>
+
+                    <View>
+                    <Text style={{fontWeight: 'bold', fontSize:14}}>Hospital(optional)</Text>
                         <TextInput style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} placeholder="Landmark" value={landmark} onChangeText={(text) => setlandmark(text)} ></TextInput>
                     </View>
 

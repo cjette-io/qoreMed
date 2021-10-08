@@ -60,7 +60,7 @@ const ClinicAddress = ({id}) => {
                 address_1:address_1,
                 address_2:address_2,
                 city : city,
-                province : province
+                province : province // kahit nka hardcode di tlaga na save
      
            })
         })

@@ -173,7 +173,7 @@ const ClinicAddNew = ({navigation}) => {
                     <Text style={{fontSize:16, fontWeight:'bold'}}>Consultation Fee*</Text>
                         <TextInput
                          style={{ borderRadius: 10, backgroundColor: '#F3F2F2', padding: 10 }} 
-                         placeholder="Consultation Fee"
+                         placeholder="0.00"
                          keyboardType="numeric"
                           value={fee} onChangeText={(text) => setFee(text)}/>
                     

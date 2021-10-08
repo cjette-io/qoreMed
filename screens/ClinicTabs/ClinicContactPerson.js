@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react'
-import { StyleSheet, Text, View,TouchableOpacity,ScrollView, TextInput,Dimensions } from 'react-native'
+import { ActivityIndicator, StyleSheet, Text, View,TouchableOpacity,ScrollView, TextInput,Dimensions } from 'react-native'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -17,6 +17,8 @@ const ClinicContactPerson = ({id}) => {
     const [phone_number, setphone_number] = useState('')
     const [landline, setlandline]= useState('')
     const [token , setToken] = useState('')
+
+    const [isSaving ,setIsSaving] = useState(false)
     useEffect(async () =>{
         let token;
         token = await AsyncStorage.getItem('userToken');
@@ -48,6 +50,10 @@ const ClinicContactPerson = ({id}) => {
     },[])
 
     const updateCI = () => {
+
+        setIsSaving(true)
+
+
         fetch(URL + 'api/v1/clinics/' + id, {
             method: 'PATCH',
             headers: {
@@ -57,7 +63,7 @@ const ClinicContactPerson = ({id}) => {
             },body: JSON.stringify({
                
                 contact_person: contact_person,
-                email:'jette@gmail.com',
+                email:email,
                 phone_number : phone_number,
                 landline: landline
 
@@ -69,8 +75,7 @@ const ClinicContactPerson = ({id}) => {
             .then((json) => {
               
                 console.log(json)
-               
-
+                setIsSaving(false)
 
             })
             .catch((error) => {
@@ -114,8 +119,14 @@ const ClinicContactPerson = ({id}) => {
               <TouchableOpacity
               onPress={() => updateCI()}
                style={{borderRadius:10, backgroundColor:'gray', padding:10, width:'80%', justifyContent: 'center', alignItems: 'center'}}>
-                  <Text style={{fontSize:16, fontWeight:'700',color:'white'}}>Save</Text>
-               
+                  
+                  {isSaving === true ? (
+                    <ActivityIndicator size="large" color="#00ff00" />
+                  ) : (
+                    <Text style={{fontSize:16, fontWeight:'700',color:'white'}}>Save</Text>
+               )}
+                  
+                  
               </TouchableOpacity>
           </View>
 
