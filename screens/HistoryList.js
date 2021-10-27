@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableOpacity, SafeAreaView } from 'react-native'
 
 
@@ -29,50 +29,68 @@ import medicalHistory from '../assets/icons/medicalHistory.png'
 
 const HistoryList = ({ navigation, route }) => {
 
-    const Patient_ID = route.params
+    const { Patient_ID, Gender } = route.params
 
     const History = [
         {
             title: 'Medications',
             icon: medication,
-            url: 'Medications'
+            url: 'Medications',
+            type: 'male'
         },
         {
             title: 'Vaccinations',
             icon: vaccine,
-            url: 'Vaccination'
+            url: 'Vaccination',
+            type: 'male'
         },
         {
             title: 'Procedures',
             icon: procedure,
-            url: 'Procedures'
+            url: 'Procedures',
+            type: 'male'
         },
         {
             title: 'Allergies',
             icon: allergy,
-            url: 'Allergies'
+            url: 'Allergies',
+            type: 'male'
         },
         {
             title: 'Substance Use',
             icon: substance,
-            url: 'Substances'
+            url: 'Substances',
+            type: 'male'
         },
         {
             title: 'Sexual History',
             icon: sexual,
-            url: 'SexualHistory'
+            url: 'SexualHistory',
+            type: 'male'
         },
         {
             title: 'Medical History',
             icon: medicalHistory,
-            url:'MedicalHistory'
+            url: 'MedicalHistory',
+            type: 'male'
         },
         {
             title: 'Family History',
             icon: family,
-            url:'FamilyHistory'
+            url: 'FamilyHistory',
+            type: 'male'
+        },
+        {
+            title: 'Menstrual History',
+            icon: family,
+            url: 'MenstrualHistory',
+            type: 'female'
         },
     ]
+
+    useEffect(() => {
+        console.log(Gender)
+    }, [])
 
 
     const numColumns = 3;
@@ -89,10 +107,22 @@ const HistoryList = ({ navigation, route }) => {
         return History
     }
 
-    const navigateScreen = (url) => {
-        navigation.navigate(url, Patient_ID)
+    const navigateScreen = (url, type) => {
+
+        if (Gender == 'male' && type == 'male') {
+            navigation.navigate(url, Patient_ID)
+        }
+
     }
 
+
+    const navigateScreenForFemale = (url) => {
+
+
+        navigation.navigate(url, Patient_ID)
+
+
+    }
     const HistoryListContent = () => {
         const renderItem = ({ item, i }) => {
 
@@ -108,12 +138,21 @@ const HistoryList = ({ navigation, route }) => {
 
             return (
                 <>
-                    <TouchableOpacity onPress={() => navigateScreen(item.url)} style={styles.ItemContainer}>
+                    {Gender === 'male' && <TouchableOpacity
+                        onPress={() => navigateScreen(item.url, item.type)}
+                        style={[styles.ItemContainer, item.type === 'male' ? null : styles.ItemInvisible]}>
+
+                        {item.type === 'male' ? <Image source={item.icon}></Image> : null}
+                        {item.type === 'male' ? <Text>{item.title}</Text> : null}
+
+                    </TouchableOpacity>}
+
+                    {Gender === 'female' && <TouchableOpacity
+                        onPress={() => navigateScreenForFemale(item.url)}
+                        style={[styles.ItemContainer]}>
                         <Image source={item.icon}></Image>
                         <Text>{item.title}</Text>
-
-
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
                 </>
             )
         }

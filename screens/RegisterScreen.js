@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-import Logo from '../assets/images/logoMed.png'
+import Logo from '../assets/images/ayos_doc.png'
 
 
 import { AuthContext } from '../context';
@@ -113,6 +113,11 @@ const RegisterScreen = ({ navigation }) => {
     seterrpword(null)
 
     if (signInwith == true) {
+
+      if (fname == '' || lname == '' || prc_number == '' || mobile == '' || password == '') {
+        alert('All fields are required')
+        setisLoading(false)
+      }else {
       fetch(URL + 'api/v1/auth/register', {
         method: 'POST',
         headers: {
@@ -196,6 +201,8 @@ const RegisterScreen = ({ navigation }) => {
           console.log(error);
 
         });
+
+      }
     } else {
 
       if (fname == '' || lname == '' || prc_number == '' || mobile == '' || password == '') {
@@ -391,7 +398,7 @@ const RegisterScreen = ({ navigation }) => {
 
         <View style={styles.container_header}>
           <View>
-            <Image source={Logo} style={{ width: 170, height: 150 }}></Image>
+            <Image source={Logo} style={{ width: 190, height: 120 }}></Image>
           </View>
           <View style={{ marginTop: 10, alignItems: 'center' }}>
             <Text style={{ fontSize: 20, color: '#212529', }}>Create your account</Text>
@@ -491,7 +498,7 @@ const RegisterScreen = ({ navigation }) => {
 
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => isLoading == true ? null : signup()} style={{ padding: 10, backgroundColor: isLoading == true ? 'rgba(33,150,243, 0.3)' : '#2196f3', borderRadius: 5, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => isLoading == true ? null : signup()} style={{ padding: 10, backgroundColor: isLoading == true ? 'rgba(235,29,39, 0.3)' : '#F05622', borderRadius: 5, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
 
             <Text style={{ color: 'white', fontSize: 16, }}>Sign up</Text>
             {isLoading == true ? (

@@ -143,7 +143,7 @@ const BottomTab = () => (
                         name="home"
                         size={20}
                         style={{
-                            color: focused ? '#008FFB' : 'gray'
+                            color: focused ? '#EB1D27' : 'gray'
                         }}
                     />
                 ),
@@ -164,7 +164,7 @@ const BottomTab = () => (
                      name="doctor"
                      size={20}
                      style={{
-                         color: focused ? '#008FFB' : 'gray'
+                         color: focused ? '#EB1D27' : 'gray'
                      }}
                  />
              ),
@@ -187,7 +187,7 @@ const BottomTab = () => (
                         name="calendar"
                         size={20}
                         style={{
-                            color: focused ? '#008FFB' : 'gray'
+                            color: focused ? '#EB1D27' : 'gray'
                         }}
                     />
                 ),
@@ -209,7 +209,7 @@ const BottomTab = () => (
                      name="clinic-medical"
                      size={20}
                      style={{
-                         color: focused ? '#008FFB' : 'gray'
+                         color: focused ? '#EB1D27' : 'gray'
                      }}
                  />
              ),

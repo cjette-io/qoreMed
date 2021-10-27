@@ -38,23 +38,23 @@ const PatientAddScreen = ({ navigation }) => {
     //    patient name
 
     const [Fname, setFname] = useState('')
-    const [Mname, setMname] = useState('')
+    const [Mname, setMname] = useState(null)
     const [Lname, setLname] = useState('')
-    const [suffix, setsuffix] = useState('')
+    const [suffix, setsuffix] = useState(null)
     const [nationality, setNationality] = useState('')
 
     const [getBloodType, setBloodType] = React.useState([])
     const [getCivilStatus, setCivilStatus] = React.useState([])
 
-    const [selectedgender, setselectedgender] = React.useState('');
+    const [selectedgender, setselectedgender] = React.useState(null);
     const [selectedCivil, setselectedCivil] = React.useState(0);
     const [selectedbloodtype, setselectedbloodtype] = React.useState(0);
     const [insertDate, setInsertDate] = useState('')
 
-    const [errFname, seterrFname] = React.useState('')
-    const [errMname, seterrMname] = React.useState('')
-    const [errLname, seterrLname] = React.useState('')
-    const [errGender, seterrGender] = React.useState('')
+    const [errFname, seterrFname] = React.useState(null)
+    const [errMname, seterrMname] = React.useState(null)
+    const [errLname, seterrLname] = React.useState(null)
+    const [errGender, seterrGender] = React.useState(null)
 
     const [errbdate, seterrbdate] = useState(null)
 

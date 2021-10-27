@@ -15,6 +15,9 @@ import IconION from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+
+import FabEncounterAdd from './components/FabEncounterAdd'
+
 import URL from '../api'
 const { width, height } = Dimensions.get("window");
 const cardWidth = width / 4;
@@ -24,6 +27,8 @@ const Encounters = ({ navigation, route }) => {
     const [encounters, setencounters] = useState([])
     const Patient_id = route.params
     useEffect(async () => {
+
+        const unsubscribe = navigation.addListener('focus', async() => {
         let token;
         token = await AsyncStorage.getItem('userToken');
         fetch(URL + 'api/v1/patients/' + Patient_id + '/encounters', {
@@ -45,7 +50,15 @@ const Encounters = ({ navigation, route }) => {
                 console.log(error);
 
             });
-    }, [])
+
+        });
+        return unsubscribe;
+    }, [navigation])
+
+    const userTap = () => {
+        // navigation.navigate('MedicationAddScreen', Patient_ID)
+        navigation.navigate('EncounterAddScreen',Patient_id)
+    }
 
     function EncounterList() {
 
@@ -118,6 +131,9 @@ const Encounters = ({ navigation, route }) => {
 
             <View style={{ flex: 1, padding: 10 }}>
                 {EncounterList()}
+
+
+                <FabEncounterAdd tap={userTap} />
             </View>
         </>
     )

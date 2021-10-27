@@ -22,7 +22,8 @@ import MedicalHistoryAddScreen from './MedicalHistoryAddScreen'
 import FamilyHistory from './FamilyHistory'
 import FamilyAddHistory from './FamilyAddHistory'
 
-
+import MenstrualHistory from './MenstrualHistory'
+import MensAddEdit from './MensAddEdit'
 
 
 export {
@@ -50,6 +51,8 @@ export {
     FamilyHistory,
     FamilyAddHistory,
 
+    MenstrualHistory,
+    MensAddEdit,
     
 
 

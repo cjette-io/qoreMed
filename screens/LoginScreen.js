@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 import IconMCI from 'react-native-vector-icons/MaterialIcons';
 
-import Logo from '../assets/images/logoMed.png'
+import Logo from '../assets/images/ayos_doc.png'
 
 // Facebook Login
 import { LoginButton, AccessToken, GraphRequest, GraphRequestManager, LoginManager } from 'react-native-fbsdk-next';
@@ -245,7 +245,7 @@ const getInfoFromToken = (token) => {
 
             <View style={styles.container_header}>
                 <View>
-                    <Image source={Logo} style={{ width: 170, height: 150 }}></Image>
+                    <Image source={Logo} style={{ width: 190, height: 120 }}></Image>
                 </View>
                 <View style={{ marginTop: 10, alignItems: 'center' }}>
                     <Text style={{ fontSize: 20, color: '#212529', }}>Login to your account</Text>
@@ -278,7 +278,7 @@ const getInfoFromToken = (token) => {
 
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => isLoading == true ? null : ManualLogin()} style={{flexDirection:'row', justifyContent: 'center', padding: 10, backgroundColor: isLoading == true ? 'rgba(33,150,243, 0.3)' : '#2196f3', borderRadius: 5, alignItems: 'center' }}>
+                <TouchableOpacity onPress={() => isLoading == true ? null : ManualLogin()} style={{flexDirection:'row', justifyContent: 'center', padding: 10, backgroundColor: isLoading == true ? 'rgba(235,29,39, 0.3)' : '#F05622', borderRadius: 5, alignItems: 'center' }}>
                     <Text style={{ color: 'white', fontSize: 16, }}>Login</Text>
                     {isLoading == true ? (
                           <ActivityIndicator size="small" color="white" style={{left:10}} />

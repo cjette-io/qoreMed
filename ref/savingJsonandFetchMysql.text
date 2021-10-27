@@ -1,0 +1,16 @@
+https://www.sitepoint.com/use-json-data-fields-mysql-databases/
+
+sample syntax:
+SELECT
+  name, profile->"$.twitter" AS `twitter`
+FROM `user`;
+
+SELECT
+  name, profile->"$.twitter" AS `twitter`
+FROM `user`
+WHERE
+  profile->"$.twitter" IS NOT NULL;
+
+id	name	    profile
+1	Craig	    { “email”: [“craig@email1.com”, “craig@email2.com”], “twitter”: “@craigbuckler” }
+2	SitePoint	{ “email”: [], “twitter”: “@sitepointdotcom” }

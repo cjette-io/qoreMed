@@ -32,12 +32,18 @@ import {
   
   FamilyHistory,
   FamilyAddHistory,
-  
+
+  MenstrualHistory,
+  MensAddEdit,
+
   VitalsList,
   VitalAddScreen,
 
 
-  Encounters
+  Encounters,
+  EncounterAddScreen,
+
+  LabResult
 
 } from '../screens'
 
@@ -85,6 +91,9 @@ const PatientsContentScreen = () => (
 
     <Patients.Screen name="FamilyHistory" component={FamilyHistory} />
     <Patients.Screen name="FamilyAddHistory" component={FamilyAddHistory} />
+    
+    <Patients.Screen name="MenstrualHistory" component={MenstrualHistory} />
+    <Patients.Screen name="MensAddEdit" component={MensAddEdit} />
 
     
 
@@ -93,7 +102,11 @@ const PatientsContentScreen = () => (
     <Patients.Screen name="VitalAddScreen" component={VitalAddScreen} />
     
     <Patients.Screen name="Encounters" component={Encounters} />
+    <Patients.Screen name="EncounterAddScreen" component={EncounterAddScreen} />
     
+
+    <Patients.Screen name="LabResult" component={LabResult} />
+
     
     
     

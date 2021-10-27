@@ -39,7 +39,7 @@ const PatientProfile = ({ navigation, route }) => {
     useEffect(async () => {
         let token;
         token = await AsyncStorage.getItem('userToken');
-
+       
 
         fetch(URL + 'api/v1/patients/' + Patient_ID, {
             method: 'GET',
@@ -197,7 +197,10 @@ const PatientProfile = ({ navigation, route }) => {
 
                     <View style={{ padding: 10, }}>
                         {/* History */}
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('HistoryList', Patient_Data.id)}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('HistoryList',{
+                             Patient_ID,
+                             Gender
+                        })}>
                             <View style={styles.menuRowContent}>
                                 <View style={styles.iconContent}>
                                     <Foundation
@@ -274,7 +277,9 @@ const PatientProfile = ({ navigation, route }) => {
 
                         {/* Lab Results */}
 
-                        <View style={styles.menuRowContent}>
+                        <TouchableOpacity
+                        onPress={()=> navigation.navigate('LabResult',Patient_Data.id)}
+                         style={styles.menuRowContent}>
                             <View style={styles.iconContent}>
                                 <Entypo
                                     name="lab-flask"
@@ -293,7 +298,7 @@ const PatientProfile = ({ navigation, route }) => {
                                 color='rgba(0,143,251,0.5)'
                                 style={{ alignSelf: "center" }}
                             />
-                        </View>
+                        </TouchableOpacity>
 
                         {/* Schedule New Appointments */}
                         <View style={styles.menuRowContent}>
