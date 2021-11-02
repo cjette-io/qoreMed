@@ -114,7 +114,7 @@ const RegisterScreen = ({ navigation }) => {
 
     if (signInwith == true) {
 
-      if (fname == '' || lname == '' || prc_number == '' || mobile == '' || password == '') {
+      if (fname == '' || lname == '' || prc_number == '' || regEmail == '' || password == '') {
         alert('All fields are required')
         setisLoading(false)
       }else {

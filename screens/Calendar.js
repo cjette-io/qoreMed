@@ -11,7 +11,7 @@ import IconAnt from 'react-native-vector-icons/AntDesign';
 import IconMCI from 'react-native-vector-icons/MaterialIcons';
 import moment from "moment";
 
-const Calendar = () => {
+const Calendar = ({navigation}) => {
 
   const Appointment = [
     {
@@ -115,9 +115,9 @@ const Calendar = () => {
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            {/* <TouchableOpacity onPress={() => navigation.goBack()}>
               <IconION name="arrow-back" size={20} color='black' />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
           </View>
 

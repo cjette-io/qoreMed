@@ -66,6 +66,8 @@ const SexualHistoryAdd = ({ navigation, route }) => {
                     })
 
                     setSelectedContraceptive(reMap)
+                }else {
+                    setSelectedContraceptive([])
                 }
 
                 if (json.dyspareunia != null ){

@@ -252,39 +252,43 @@ const HomeScreen = ({ navigation }) => {
                                     const ClinicID = item.clinic_id
 
                                     return (
-                                        <TouchableOpacity key={i}
-                                            onPress={() => navigation.navigate('AppointmentPerClinic', {
-                                                clinic_id: ClinicID,
-                                                clinic_name: item.clinic_name
-                                            })}
-                                            style={{
-                                                borderLeftWidth: 4,
-                                                borderColor: '#080123',
-                                                padding: 10,
-                                                backgroundColor: 'white',
-                                                borderRadius: 5,
-                                                elevation: 5,
-                                                width: '100%',
-                                                marginTop: 10,
-                                                justifyContent: 'center'
-                                            }}
-                                        >
-                                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                                                    <Image source={Hospital} style={{ width: 45, height: 45, }}></Image>
-                                                    <View style={{ marginLeft: 5, flex: 1, paddingRight: 20 }}>
-                                                        <Text numberOfLines={1} style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>{item.clinic_name}</Text>
-                                                        {/* <Text numberOfLines={2} style={{ fontSize: 14, fontFamily: 'NunitoSans-Light', color: '#999', }}>{item.clinic_address}</Text> */}
+                                        <View key={i}>
+                                            {item.waiting > 0 && (<TouchableOpacity
+                                                onPress={() => navigation.navigate('AppointmentPerClinic', {
+                                                    clinic_id: ClinicID,
+                                                    clinic_name: item.clinic_name
+                                                })}
+                                                style={{
+                                                    borderLeftWidth: 4,
+                                                    borderColor: '#080123',
+                                                    padding: 10,
+                                                    backgroundColor: 'white',
+                                                    borderRadius: 5,
+                                                    elevation: 5,
+                                                    width: '100%',
+                                                    marginTop: 10,
+                                                    justifyContent: 'center'
+                                                }}
+                                            >
+                                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                                                        <Image source={Hospital} style={{ width: 45, height: 45, }}></Image>
+                                                        <View style={{ marginLeft: 5, flex: 1, paddingRight: 20 }}>
+                                                            <Text numberOfLines={1} style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>{item.clinic_name}</Text>
+                                                            {/* <Text numberOfLines={2} style={{ fontSize: 14, fontFamily: 'NunitoSans-Light', color: '#999', }}>{item.clinic_address}</Text> */}
 
-                                                    </View>
+                                                        </View>
 
-                                                    <View key={i} style={{ backgroundColor: 'rgba(240,86,34,0.7)', borderRadius: 5 }}>
-                                                        <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, padding: 5, borderRadius: 5, color: 'white' }}> {item.waiting} </Text>
+                                                        <View key={i} style={{ backgroundColor: 'rgba(240,86,34,0.7)', borderRadius: 5 }}>
+                                                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, padding: 5, borderRadius: 5, color: 'white' }}> {item.waiting} </Text>
 
+                                                        </View>
                                                     </View>
                                                 </View>
-                                            </View>
-                                        </TouchableOpacity>
+                                            </TouchableOpacity>)}
+                                        </View>
+
+
                                     )
                                 })}
                             </View>

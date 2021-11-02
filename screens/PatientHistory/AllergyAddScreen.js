@@ -222,7 +222,12 @@ const AllergyAddScreen = ({ navigation, route }) => {
                     <TextInput
                          onChangeText={(text) => setreactions(text)}
                         placeholder="Insert reaction"
-                        style={{ top: 5, borderWidth: 0.5, padding: 10, borderRadius: 10, borderColor: 'gray' }}
+                        style={{ 
+                            borderWidth: 0.5,
+                            padding: 6,
+                            borderRadius: 10,
+                            borderColor: 'gray'
+                         }}
                     />
                 </View>
             </View>

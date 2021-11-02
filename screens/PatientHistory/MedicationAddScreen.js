@@ -48,6 +48,7 @@ const MedicationAddScreen = ({ navigation, route }) => {
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
 
+    const [errDurationTo,seterrDurationTo] = useState('')
 
     const [formMedication, setformMedication] = useState([])
     const [medFreq, setmedFreq] = useState([])
@@ -173,11 +174,11 @@ const MedicationAddScreen = ({ navigation, route }) => {
     const AddMedicationBtn = async() => {
 
         setIsSaving(true)
-
-        if (generic_name == '' || brand_name == '' || dose == "" || medicineForm.id == '' || Qty == '' ) {
-                alert('All fields are required')
-                setIsSaving(false)
-        }else{
+        seterrDurationTo('')
+        // if (generic_name == '' || brand_name == '' || dose == "" || medicineForm.id == '' || Qty == '' ) {
+        //         alert('All fields are required')
+        //         setIsSaving(false)
+        // }else{
 
             let token;
             token = await AsyncStorage.getItem('userToken');
@@ -207,7 +208,8 @@ const MedicationAddScreen = ({ navigation, route }) => {
                     console.log(json)
                    
                   if(json.message === "The given data was invalid."){
-    
+                    
+                    seterrDurationTo(json.errors?.duration_to)
                    
                     setIsSaving(false)
                     }else{
@@ -224,7 +226,7 @@ const MedicationAddScreen = ({ navigation, route }) => {
                     console.log(error);
     
                 });
-        }
+        // }
 
 
 
@@ -319,7 +321,7 @@ const MedicationAddScreen = ({ navigation, route }) => {
                         <Text>(Insert date from)</Text>
                         <TouchableWithoutFeedback onPress={() => showFromDatePicker()} style={{ marginTop: 5, }}>
                             <View>
-                                <Text style={[styles.inputs, { color: '#999', }]}>{!fromDate ? 'mm/dd/yyyy' : fromDate}</Text>
+                                <Text style={[styles.inputs, { color: !fromDate ? '#999' : 'black', }]}>{!fromDate ? 'mm/dd/yyyy' : fromDate}</Text>
                             </View>
                         </TouchableWithoutFeedback>
                     </View>
@@ -328,9 +330,13 @@ const MedicationAddScreen = ({ navigation, route }) => {
 
                         <TouchableWithoutFeedback onPress={() => showToDatePicker()} style={{ marginTop: 5, }}>
                             <View>
-                                <Text style={[styles.inputs, { color: '#999', }]}>{!toDate ? 'mm/dd/yyyy' : toDate}</Text>
+                                <Text style={[styles.inputs, { color: !toDate ?  '#999' : 'black', }]}>{!toDate ? 'mm/dd/yyyy' : toDate}</Text>
                             </View>
                         </TouchableWithoutFeedback>
+
+                        <View>
+                            {errDurationTo != '' ? <Text style={{color:'red'}}>{errDurationTo}</Text> : null}
+                        </View>
                     </View>
 
                     <View>
@@ -428,10 +434,11 @@ export default MedicationAddScreen
 
 const styles = StyleSheet.create({
     inputs: {
-        borderBottomWidth: 0.5,
+        borderWidth: 0.5,
         padding: 10,
-        borderColor: '#3C1053'
-
+        borderColor: 'gray',
+        borderRadius: 10,
+        marginTop: 5, 
     }
 })
 

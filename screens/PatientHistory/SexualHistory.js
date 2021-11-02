@@ -45,7 +45,12 @@ const SexualHistory = ({ navigation, route }) => {
                  console.log(JSON.stringify(json))
                 //   setSubstancesHistoryData(json)
                 setSexualData(json)
-                setcontraceptivesItems(json.contraceptive_items)
+                if (json.contraceptive_items.length > 0) {
+                    setcontraceptivesItems(json.contraceptive_items)
+                }else{
+                    setcontraceptivesItems([])
+                }
+              
 
             })
             .catch((error) => {

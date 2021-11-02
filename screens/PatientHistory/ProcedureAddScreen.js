@@ -159,7 +159,7 @@ const ProcedureAddScreen = ({ navigation, route }) => {
                                 borderRadius: 10,
                                 borderColor: 'gray'
                             }}>
-                                <Text style={[styles.inputs, { color: '#999', }]}>{!dfdpicker ? 'mm/dd/yyyy' : dfdpicker}</Text>
+                                <Text style={[styles.inputs, { color: !dfdpicker ? '#999' : 'black', }]}>{!dfdpicker ? 'mm/dd/yyyy' : dfdpicker}</Text>
                             </View>
                         </TouchableWithoutFeedback>
 

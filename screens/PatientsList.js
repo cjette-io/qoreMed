@@ -47,7 +47,7 @@ const PatientsList = ({ navigation }) => {
             })
                 .then((response) => response.json())
                 .then((json) => {
-                  console.log(JSON.stringify(json));
+                    // console.log(JSON.stringify(json));
                     setPatientDataList(json.data)
                     setLoading(false)
 
@@ -147,30 +147,32 @@ const PatientsList = ({ navigation }) => {
                 <View key={i + '-' + item.id} >
                     <Swipeable renderLeftActions={LeftSwipe} renderRightActions={rightSwipe}>
 
-                        <TouchableOpacity onPress={() => GotoProfile(item.id)} style={{ borderLeftWidth: 4, borderColor: '#008FFB', padding: 10, backgroundColor: 'white', borderRadius: 5, elevation: 5, width: '100%', marginBottom: 10 }}>
+                        <TouchableOpacity onPress={() => GotoProfile(item.id)} style={{ padding: 10, backgroundColor: 'white', borderRadius: 5, width: '100%', marginBottom: 5 }}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
 
-                                <View style={{ flex: 1 }}>
+                                <View style={{flexDirection:'row'}}>
+                                    <Image source={{uri : item.photo_url}} style={{width:40, height:40, borderRadius:40}} />
 
-                                    <View style={{ flex: 1 }}>
-                                        <Text numberOfLines={2} style={{ fontSize: 18 }}>{item.full_name} </Text>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                                            <View style={{ height: 10, width: 10, borderRadius: 10, backgroundColor: 'pink', marginRight: 5 }}>
+                                    <View style={{left:5}}>
 
+                                        <View style={{ flex: 1 }}>
+                                            <Text numberOfLines={2} style={{ fontSize: 16, fontWeight: 'bold' }}>{item.full_name}</Text>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                                                <Text style={{color:'gray'}}>{item.profile.gender}</Text>
                                             </View>
-                                            <Text>{item.profile.gender}</Text>
                                         </View>
+
+
+
                                     </View>
+                                </View>
 
-
-
+                                <View>
+                                    
                                 </View>
 
 
 
-                                <View style={{ justifyContent: "center", alignItems: 'center' }}>
-                                    <Image source={notes}></Image>
-                                </View>
 
                             </View>
 
@@ -266,7 +268,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
-        backgroundColor: 'white'
+        // backgroundColor: 'rgba(240,86,34,0.1)'
     },
     deleteBox: {
         backgroundColor: '#008FFB',
