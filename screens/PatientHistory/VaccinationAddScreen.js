@@ -19,6 +19,7 @@ const VaccinationAddScreen = ({ navigation, route }) => {
     const Patient_ID = route.params
     const [isSaving, setIsSaving] = useState(false)
     const [vaccineCat, setVaccineCat] = useState([])
+    const [vaccineParentCat, setVaccineParentCat] = useState([])
     const [brand, setbrand] = useState('')
     const [Dosage, setDosage] = useState('')
     const [Type, setType] = useState('')
@@ -103,7 +104,7 @@ const VaccinationAddScreen = ({ navigation, route }) => {
             .then((json) => {
 
 
-                //alert(JSON.stringify(json))
+                //  console.log(JSON.stringify(json))
                 //setPatientMedicationList(json.data.reverse())
                 setVaccineCat(json)
             })
@@ -113,6 +114,30 @@ const VaccinationAddScreen = ({ navigation, route }) => {
 
             }
             );
+
+        fetch(URL + "api/v1/references/vaccine-categories", {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
+            }
+        })
+            .then((response) => response.json())
+            .then((json) => {
+
+
+                //   console.log('Categories'+JSON.stringify(json))
+                //setPatientMedicationList(json.data.reverse())
+                //setAllergyCat(json)
+
+                setVaccineParentCat(json)
+            })
+            .catch((error) => {
+
+                console.log(error);
+                setVaccineParentCat([])
+            });
     }, [])
     const handleToConfirmForm = (id, name) => {
         setselected_vaccine({
@@ -251,7 +276,7 @@ const VaccinationAddScreen = ({ navigation, route }) => {
                             borderRadius: 10,
                             borderColor: 'gray'
                         }}>
-                            <Text style={[styles.inputs, { color: !dfdpicker  ? '#999' :'black' , }]}>{!dfdpicker ? 'mm/dd/yyyy' : dfdpicker}</Text>
+                            <Text style={[styles.inputs, { color: !dfdpicker ? '#999' : 'black', }]}>{!dfdpicker ? 'mm/dd/yyyy' : dfdpicker}</Text>
                         </View>
                     </TouchableWithoutFeedback>
                     {ErrDate != '' ? (<Text style={{ color: 'red' }}>{ErrDate}</Text>) : null}
@@ -332,17 +357,36 @@ const VaccinationAddScreen = ({ navigation, route }) => {
                         showsVerticalScrollIndicator={false}
 
                     >
-                        {vaccineCat.map((item, i) => {
-                            return (
-                                <TouchableOpacity
-                                    key={i}
-                                    onPress={() => handleToConfirmForm(item.id, item.name,)}
 
-                                >
-                                    <Text> - {item.name}</Text>
-                                </TouchableOpacity>
-                            )
-                        })}
+
+                        <View>
+                            {vaccineParentCat.map((item, i) => {
+                                return (
+                                    <View style={{ padding: 10 }} key={i}>
+                                        <View>
+                                            <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
+                                        </View>
+
+                                        {vaccineCat.filter(filter => filter.category.name.includes(item.name)).map((item, i) => {
+                                            return (
+                                                <TouchableOpacity
+                                                key={i}
+                                                onPress={() => handleToConfirmForm(item.id, item.name,)}
+
+                                            >
+                                                <Text> - {item.name}</Text>
+                                            </TouchableOpacity>
+                                            )
+                                        })}
+
+                                    </View>
+                                )
+                            })}
+                        </View>
+
+
+
+
                     </ScrollView>
                 </Modal>
             </Portal>

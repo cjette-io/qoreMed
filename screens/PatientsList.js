@@ -31,63 +31,43 @@ const PatientsList = ({ navigation }) => {
 
     const [PatientDataList, setPatientDataList] = useState([])
     const [loading, setLoading] = useState(true)
+    const [pageOffset, setpageOffset] = useState(1)
+    const [loadMoreLoading, setLoadMoreLoading] = useState(false)
     React.useEffect(async () => {
 
-        const unsubscribe = navigation.addListener('focus', async () => {
+        const unsubscribe = navigation.addListener('focus', () => {
             // setLoading(true)
-            let token;
-            token = await AsyncStorage.getItem('userToken');
-            fetch(URL + 'api/v1/patients', {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + token
-                }
-            })
-                .then((response) => response.json())
-                .then((json) => {
-                    // console.log(JSON.stringify(json));
-                    setPatientDataList(json.data)
-                    setLoading(false)
-
-                })
-                .catch((error) => {
-
-                    console.log(error);
-
-                });
-
-
+            get_Data()
         });
         return unsubscribe;
     }, [navigation]);
 
-    // useEffect(async() => {
-    //     let token;
-    //     token = await AsyncStorage.getItem('userToken');
+    async function get_Data() {
+        let token;
+        token = await AsyncStorage.getItem('userToken');
+        fetch(URL + 'api/v1/patients?page=' + pageOffset, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
+            }
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                console.log(JSON.stringify(json));
+                setpageOffset(pageOffset + 1)
+                setPatientDataList([...PatientDataList, ...json.data])
 
-    //     fetch(URL + 'api/v1/patients', {
-    //         method: 'GET',
-    //         headers: {
-    //             Accept: 'application/json',
-    //             'Content-Type': 'application/json',
-    //             Authorization: 'Bearer ' + token
-    //         }
-    //     })
-    //         .then((response) => response.json())
-    //         .then((json) => {
-    //             //  console.log(JSON.stringify(json));
-    //              setPatientDataList(json.data)
+                setLoading(false)
+                setLoadMoreLoading(false)
+            })
+            .catch((error) => {
 
-    //         })
-    //         .catch((error) => {
+                console.log(error);
 
-    //             console.log(error);
-
-    //         });
-
-    // },[])
+            });
+    }
 
     const GotoProfile = (PatientID) => {
         navigation.navigate('PatientProfile', PatientID)
@@ -98,9 +78,14 @@ const PatientsList = ({ navigation }) => {
         navigation.navigate('PatientAddScreen')
     }
 
+    const loadMore = () => {
+        setLoadMoreLoading(true)
+        get_Data()
+    }
 
 
     const PatientListItem = () => {
+
 
 
         const renderItem = ({ item, i }) => {
@@ -150,15 +135,15 @@ const PatientsList = ({ navigation }) => {
                         <TouchableOpacity onPress={() => GotoProfile(item.id)} style={{ padding: 10, backgroundColor: 'white', borderRadius: 5, width: '100%', marginBottom: 5 }}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
 
-                                <View style={{flexDirection:'row'}}>
-                                    <Image source={{uri : item.photo_url}} style={{width:40, height:40, borderRadius:40}} />
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Image source={{ uri: item.photo_url }} style={{ width: 40, height: 40, borderRadius: 40 }} />
 
-                                    <View style={{left:5}}>
+                                    <View style={{ left: 5 }}>
 
                                         <View style={{ flex: 1 }}>
                                             <Text numberOfLines={2} style={{ fontSize: 16, fontWeight: 'bold' }}>{item.full_name}</Text>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                                                <Text style={{color:'gray'}}>{item.profile.gender}</Text>
+                                                <Text style={{ color: 'gray' }}>{item.profile.gender}</Text>
                                             </View>
                                         </View>
 
@@ -168,7 +153,7 @@ const PatientsList = ({ navigation }) => {
                                 </View>
 
                                 <View>
-                                    
+
                                 </View>
 
 
@@ -187,24 +172,45 @@ const PatientsList = ({ navigation }) => {
         }
 
 
+        const renderFooter = () => {
+            return (
 
+                <View style={{ padding: 5, justifyContent: 'center', alignItems: 'center' }}>
+                    <TouchableOpacity
+                        activeOpacity={0.9}
+                        onPress={() => loadMore()}
+                        style={{
+                            padding: 10,
+                            backgroundColor: '#ED2A26',
+                            borderRadius: 4,
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
+                    {loadMoreLoading == true ?    <ActivityIndicator size="small" color="white" /> :   <Text style={{ color: 'white' }}>Load More</Text> }
+                      
+                    </TouchableOpacity>
+
+                </View>
+            )
+        }
 
 
         return (
             <View style={{ flex: 1 }}>
 
                 <FlatList
-
-
                     contentContainerStyle={{ paddingBottom: 50 }}
                     data={PatientDataList}
                     vertical
                     showsVerticalScrollIndicator={false}
-
                     keyExtractor={item => `${item.id}`}
                     renderItem={renderItem}
-
+                    ListFooterComponent={renderFooter}
                 />
+
+
             </View>
         )
     }

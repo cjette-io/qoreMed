@@ -183,6 +183,10 @@ const ClinicAddSchedule = ({ route, navigation }) => {
         {
             freq_id: ' every_weekdays',
             freq_name: 'Every Weekdays'
+        },
+        {
+            freq_id: ' everyday',
+            freq_name: 'Everyday'
         }
     ]
 
@@ -229,6 +233,7 @@ const ClinicAddSchedule = ({ route, navigation }) => {
         setIsSaving(true)
         setErrtype('')
         setStart_date('')
+        seterrEnd_date("")
         seterrstart_time('')
         seterrEnd_time('')
 
@@ -278,7 +283,14 @@ const ClinicAddSchedule = ({ route, navigation }) => {
                       }
 
                       if ('end_date' in json.errors) {
-                        seterrEnd_date(json.errors.end_date)
+                     
+                        if(json.errors.end_date[0] ==  'The end date field is required when frequency is every_weekdays.') {
+                            seterrEnd_date('The end date field is required when frequency is every weekdays.')
+                        }else{
+                            seterrEnd_date(json.errors.end_date)
+                        }
+
+                       
                       }
 
                       setIsSaving(false)

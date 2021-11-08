@@ -36,6 +36,8 @@ const PatientProfile = ({ navigation, route }) => {
     const [mobile, setMobile] = useState('')
     const [email, setEmail] = useState('')
 
+    const [isCreatedBy, setIsCreatedBy] = useState(false)
+
     useEffect(async () => {
         let token;
         token = await AsyncStorage.getItem('userToken');
@@ -54,6 +56,10 @@ const PatientProfile = ({ navigation, route }) => {
 
 
                 console.log(JSON.stringify(json))
+
+                if ('created_by' in json.profile.civil_status){
+                    setIsCreatedBy(true)
+                }
 
                 setPatientData(json)
                 if (json.profile.birthday != null) {
@@ -134,9 +140,13 @@ const PatientProfile = ({ navigation, route }) => {
                     <Text style={styles.daysText}>Patient ID: {Patient_Data.patient_no}</Text>
 
                     <View style={{ alignItems: 'center', marginVertical: 15 }}>
+                     {isCreatedBy == false ? (null) : (
                         <TouchableOpacity style={{ padding: 10, backgroundColor: '#008FFB', borderRadius: 10 }}>
                             <Text style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}>Edit Profile</Text>
                         </TouchableOpacity>
+                     ) }
+                     
+                      
                     </View>
 
                     <View style={{ marginTop: 5, padding: 20 }}>

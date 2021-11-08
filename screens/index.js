@@ -1,5 +1,7 @@
 import RegisterScreen from "./RegisterScreen";
 import LoginScreen from "./LoginScreen";
+import RegisterSuccess from "./RegisterSuccess";
+
 import HomeScreen from "./HomeScreen";
 import AppointmentPerClinic from "./AppointmentPerClinic";
 //Appointment
@@ -65,6 +67,8 @@ export {
 
     RegisterScreen,
     LoginScreen,
+    RegisterSuccess,
+
     HomeScreen,
     AppointmentPerClinic,
     PatientsList,

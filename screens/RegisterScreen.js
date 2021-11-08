@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, View, Image, ImageBackground, ScrollView, Dimensions, TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
+import { CommonActions } from '@react-navigation/native';
+
 
 const { width, height } = Dimensions.get('window')
 
@@ -97,6 +99,14 @@ const RegisterScreen = ({ navigation }) => {
 
   }
 
+  const resetActionForEmail = CommonActions.reset({
+    index: 1,
+    routes: [{ name: 'RegisterSuccess',
+                  params: { email: regEmail}
+              
+              }],
+              key: null
+});
 
 
   const signup = () => {
@@ -171,20 +181,9 @@ const RegisterScreen = ({ navigation }) => {
 
           } else if (json.message === "Thanks for signing up!") {
 
-            Alert.alert(
-              "Verify Your Email Address: " + regEmail,
-              "Before proceeding, please check your email for a verification link.",
-              [
-                {
-                  text: "Close",
-                  onPress: () => console.log("Cancel Pressed"),
-                  style: "cancel"
-                },
-                { text: "Resend", onPress: () => console.log("OK Pressed") }
-              ]
-            );
+           
 
-
+            navigation.dispatch(resetActionForEmail);
 
 
             // alert(json.message)
@@ -386,7 +385,9 @@ const RegisterScreen = ({ navigation }) => {
 
 
 
-
+const Goto = () => {
+  navigation.dispatch(resetActionForEmail);
+}
 
   return (
     <>
@@ -542,8 +543,9 @@ const RegisterScreen = ({ navigation }) => {
             <Text style={{ color: '#999', }}>Already have an account?</Text>
           </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')} style={{ backgroundColor: '#11316A', width: '100%', padding: 10, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
-
+          {/* <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')} style={{ backgroundColor: '#11316A', width: '100%', padding: 10, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}> */}
+          <TouchableOpacity onPress={() => Goto()} style={{ backgroundColor: '#11316A', width: '100%', padding: 10, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
+         
             <Text style={{ color: 'white', fontWeight: '700' }}> Sign in</Text>
           </TouchableOpacity>
         </View>

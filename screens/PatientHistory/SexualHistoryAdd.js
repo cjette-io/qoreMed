@@ -14,6 +14,7 @@ const SexualHistoryAdd = ({ navigation, route }) => {
     LogBox.ignoreAllLogs();
 
     const Patient_ID = route.params
+    const [method, setMethod] = useState('POST')
     const [isSaving, setIsSaving] = useState(false)
     const [getContraceptive, setContraceptive] = useState([])
     const [selectedContraceptive, setSelectedContraceptive] = useState([])
@@ -55,6 +56,7 @@ const SexualHistoryAdd = ({ navigation, route }) => {
                 }
 
                 if (json.contraceptive_items.length > 0) {
+                    setMethod('PATCH')
                     let reMap = []
                     json.contraceptive_items.map((item) => {
                         reMap.push(
@@ -68,6 +70,7 @@ const SexualHistoryAdd = ({ navigation, route }) => {
                     setSelectedContraceptive(reMap)
                 }else {
                     setSelectedContraceptive([])
+                    setMethod('POST')
                 }
 
                 if (json.dyspareunia != null ){
@@ -183,6 +186,7 @@ const SexualHistoryAdd = ({ navigation, route }) => {
     token = await AsyncStorage.getItem('userToken');
 
     
+   if (method === 'POST') {
     fetch(URL + "api/v1/patients/" + Patient_ID + "/history/sexual-history", {
         method: 'POST',
         headers: {
@@ -219,6 +223,45 @@ const SexualHistoryAdd = ({ navigation, route }) => {
             console.log(error);
 
         });
+   }else {
+    fetch(URL + "api/v1/patients/" + Patient_ID + "/history/sexual-history/update", {
+        method: 'PATCH',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token
+        },
+        body: JSON.stringify({
+            patient_id:Patient_ID,
+            coitarche: Coitarche,
+            sexual_partners: NSP,
+            coitus_weekly: CPW,
+            dyspareunia:selectedDyspareunia,
+            bleeding : selectedPCB,
+            contraceptives : result
+        })
+    })
+        .then((response) => response.json())
+        .then((json) => {
+
+            console.log(json)
+
+            if(json.message === "The given data was invalid."){
+                setIsSaving(false)
+                
+                }else{
+                    alert('Data successfully saved')
+                    setIsSaving(false)
+                    navigation.goBack()
+                }
+
+        })
+        .catch((error) => {
+
+            console.log(error);
+
+        });
+   }
 
 
    
